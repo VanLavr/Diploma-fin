@@ -3,7 +3,7 @@ package main
 func main() {
 	// --- for student
 	// create GET /allDebts endpoint +
-	// create POST /notification endpoint
+	// create POST /notification endpoint +
 
 	// --- for teacher
 	// create GET /allExams endpoint

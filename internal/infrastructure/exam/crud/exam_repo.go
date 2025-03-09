@@ -5,6 +5,8 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/VanLavr/Diploma-fin/internal/domain/exam"
+	"github.com/VanLavr/Diploma-fin/pkg/errors"
+	"github.com/VanLavr/Diploma-fin/pkg/log"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -53,7 +55,7 @@ func (this repo) GetExams(ctx context.Context, filters exam.GetExamsFilters) ([]
 
 func (this repo) GetDebts(ctx context.Context, filters exam.GetDebtsFilters) ([]exam.Debt, error) {
 	if err := filters.Validate(); err != nil {
-		return nil, err
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "invalid filters")
 	}
 
 	query := sq.Select(
@@ -87,12 +89,12 @@ func (this repo) GetDebts(ctx context.Context, filters exam.GetDebtsFilters) ([]
 	sql, args, err := query.ToSql()
 
 	if err != nil {
-		return nil, err
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "can not build sql")
 	}
 
 	rows, err := this.db.Query(ctx, sql, args...)
 	if err != nil {
-		return nil, err
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "can not perform query")
 	}
 
 	var result []exam.Debt
@@ -111,7 +113,7 @@ func (this repo) GetDebts(ctx context.Context, filters exam.GetDebtsFilters) ([]
 			&debt.StudentMiddleName,
 			&debt.Date,
 		); err != nil {
-			return nil, err
+			return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "can not scan result")
 		}
 
 		result = append(result, debt)
