@@ -77,5 +77,8 @@ func (this usecase) SendNotification(ctx context.Context, UUID string, examID in
 	}
 
 	// send notification
-	return
+	return this.studentMailer.SendNotification(ctx, students[0], teachers[0].Email, exam.Exam{
+		ID:   examID,
+		Name: exams[0].ExamName,
+	})
 }
