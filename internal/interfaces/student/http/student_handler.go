@@ -2,6 +2,7 @@ package http
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/VanLavr/Diploma-fin/internal/application/student"
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,25 @@ func (this ChatroomHandler) RegisterRoutes() {
 }
 
 func (this ChatroomHandler) sendNotification(c *gin.Context) {
-	panic("not implemented")
+	id := c.Param("examID")
+	examID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, getAllDebtsDTO{
+			Err:  err,
+			Data: nil,
+		})
+		return
+	}
+
+	switch err := this.usecase.SendNotification(c.Request.Context(), c.Param("UUID"), examID); err {
+	case nil:
+	default:
+		c.JSON(http.StatusInternalServerError, getAllDebtsDTO{
+			Err:  err,
+			Data: nil,
+		})
+		return
+	}
 }
 
 func (this ChatroomHandler) getAllDebts(c *gin.Context) {
@@ -37,7 +56,7 @@ func (this ChatroomHandler) getAllDebts(c *gin.Context) {
 		return
 	}
 
-	exams := make([]Exam, len(debts))
+	exams := make([]Debt, len(debts))
 	for i, exam := range debts {
 		copyExam(&exams[i], &exam)
 	}

@@ -11,5 +11,6 @@ type Connector interface {
 }
 
 type ExamRepository interface {
-	GetAllDebts(context.Context, GetAllDebtsFilter) ([]Exam, error)
+	GetDebts(context.Context, GetDebtsFilters) ([]Debt, error)
+	GetExams(context.Context, GetExamsFilters) ([]Exam, error)
 }
