@@ -4,11 +4,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/VanLavr/Diploma-fin/internal/application/logic"
 	"github.com/VanLavr/Diploma-fin/internal/domain/commands"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
+	"github.com/VanLavr/Diploma-fin/internal/services/logic"
 	"github.com/VanLavr/Diploma-fin/pkg/errors"
 	"github.com/VanLavr/Diploma-fin/pkg/log"
 )
@@ -17,8 +17,10 @@ type teacherUsecase struct {
 	repo repositories.Repository
 }
 
-func NewTeacherUsecase() logic.TeacherUsecase {
-	return &teacherUsecase{}
+func NewTeacherUsecase(repo repositories.Repository) logic.TeacherUsecase {
+	return &teacherUsecase{
+		repo: repo,
+	}
 }
 
 func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string, debtID int64) error {

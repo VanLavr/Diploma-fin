@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"github.com/VanLavr/Diploma-fin/internal/application/types"
+	"github.com/VanLavr/Diploma-fin/internal/services/types"
 )
 
 type StudentUsecase interface {

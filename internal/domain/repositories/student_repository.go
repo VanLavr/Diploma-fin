@@ -3,14 +3,14 @@ package repositories
 import (
 	"context"
 
-	"github.com/VanLavr/Diploma-fin/internal/domain/entities"
+	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 )
 
 type StudentRepository interface {
-	GetStudents(context.Context, query.GetStudentsFilters) ([]entities.Student, error)
+	GetStudents(context.Context, query.GetStudentsFilters) ([]models.Student, error)
 }
 
 type StudentMailer interface {
-	SendNotification(context.Context, entities.Student, string, entities.Exam) error
+	SendNotification(context.Context, models.Student, string, models.Exam) error
 }

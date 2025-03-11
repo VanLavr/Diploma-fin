@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/VanLavr/Diploma-fin/internal/domain/entities"
+	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -20,7 +20,7 @@ func NewStudentRepo(conn *pgxpool.Pool) repositories.StudentRepository {
 	}
 }
 
-func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStudentsFilters) ([]entities.Student, error) {
+func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStudentsFilters) ([]models.Student, error) {
 	if err := filters.Validate(); err != nil {
 		return nil, err
 	}
@@ -48,9 +48,9 @@ func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStuden
 		return nil, err
 	}
 
-	var result []entities.Student
+	var result []models.Student
 	for rows.Next() {
-		stdnt := entities.Student{Group: &entities.Group{}}
+		stdnt := models.Student{Group: &models.Group{}}
 		if err := rows.Scan(
 			&stdnt.UUID,
 			&stdnt.FirstName,

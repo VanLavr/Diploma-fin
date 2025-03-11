@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/VanLavr/Diploma-fin/internal/application/logic"
-	"github.com/VanLavr/Diploma-fin/internal/interfaces/dto"
+	"github.com/VanLavr/Diploma-fin/internal/controllers/dto"
+	"github.com/VanLavr/Diploma-fin/internal/services/logic"
 	"github.com/VanLavr/Diploma-fin/pkg/errors"
 	"github.com/VanLavr/Diploma-fin/pkg/log"
 	"github.com/gin-gonic/gin"

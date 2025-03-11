@@ -3,11 +3,11 @@ package application
 import (
 	"context"
 
-	"github.com/VanLavr/Diploma-fin/internal/application/logic"
-	"github.com/VanLavr/Diploma-fin/internal/application/types"
-	"github.com/VanLavr/Diploma-fin/internal/domain/entities"
+	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
+	"github.com/VanLavr/Diploma-fin/internal/services/logic"
+	"github.com/VanLavr/Diploma-fin/internal/services/types"
 	"github.com/VanLavr/Diploma-fin/pkg/errors"
 	"github.com/VanLavr/Diploma-fin/pkg/log"
 )
@@ -16,8 +16,10 @@ type studentUsecase struct {
 	repo repositories.Repository
 }
 
-func NewStudentUsecase() logic.StudentUsecase {
-	return &studentUsecase{}
+func NewStudentUsecase(repo repositories.Repository) logic.StudentUsecase {
+	return &studentUsecase{
+		repo: repo,
+	}
 }
 
 func (this studentUsecase) GetAllDebts(ctx context.Context, UUID string) ([]types.Debt, error) {
@@ -72,7 +74,7 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 	}
 
 	// send notification
-	err = this.repo.SendNotification(ctx, students[0], teachers[0].Email, entities.Exam{
+	err = this.repo.SendNotification(ctx, students[0], teachers[0].Email, models.Exam{
 		ID:   examID,
 		Name: exams[0].Exam.Name,
 	})

@@ -5,7 +5,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/VanLavr/Diploma-fin/internal/domain/commands"
-	"github.com/VanLavr/Diploma-fin/internal/domain/entities"
+	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	"github.com/VanLavr/Diploma-fin/pkg/errors"
@@ -24,7 +24,7 @@ func NewExamRepo(conn *pgxpool.Pool) repositories.ExamRepository {
 	}
 }
 
-func (this examRepo) GetExams(ctx context.Context, filters query.GetExamsFilters) ([]entities.Exam, error) {
+func (this examRepo) GetExams(ctx context.Context, filters query.GetExamsFilters) ([]models.Exam, error) {
 	if err := filters.Validate(); err != nil {
 		return nil, err
 	}
@@ -44,9 +44,9 @@ func (this examRepo) GetExams(ctx context.Context, filters query.GetExamsFilters
 		return nil, err
 	}
 
-	var result []entities.Exam
+	var result []models.Exam
 	for rows.Next() {
-		var exam entities.Exam
+		var exam models.Exam
 		if err := rows.Scan(&exam.ID, &exam.Name); err != nil {
 			return nil, err
 		}
@@ -57,7 +57,7 @@ func (this examRepo) GetExams(ctx context.Context, filters query.GetExamsFilters
 	return result, nil
 }
 
-func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters) ([]entities.Debt, error) {
+func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters) ([]models.Debt, error) {
 	if err := filters.Validate(); err != nil {
 		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "invalid filters")
 	}
@@ -104,9 +104,9 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "can not perform query")
 	}
 
-	var result []entities.Debt
+	var result []models.Debt
 	for rows.Next() {
-		var debt entities.Debt
+		var debt models.Debt
 		if err := rows.Scan(
 			&debt.Exam.ID,
 			&debt.Exam.Name,

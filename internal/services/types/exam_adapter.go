@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/VanLavr/Diploma-fin/internal/domain/entities"
+	entities "github.com/VanLavr/Diploma-fin/internal/domain/models"
 )
 
 func DebtFromDomain(src *entities.Debt) Debt {

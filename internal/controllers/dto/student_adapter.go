@@ -3,7 +3,7 @@ package dto
 import (
 	"time"
 
-	"github.com/VanLavr/Diploma-fin/internal/application/types"
+	"github.com/VanLavr/Diploma-fin/internal/services/types"
 )
 
 func DebtDTOFromTypes(src types.Debt) Debt {

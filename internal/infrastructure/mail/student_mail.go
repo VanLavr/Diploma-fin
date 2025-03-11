@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/smtp"
 
-	"github.com/VanLavr/Diploma-fin/internal/domain/entities"
+	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
 	"github.com/VanLavr/Diploma-fin/pkg/config"
@@ -18,7 +18,7 @@ type mailer struct {
 	AuthPassword string
 }
 
-func NewStudentMailer(cfg config.Config) repositories.StudentMailer {
+func NewStudentMailer(cfg *config.Config) repositories.StudentMailer {
 	return &mailer{
 		SMTPHost:     cfg.SMTPHost,
 		SMTPPort:     cfg.SMTPPort,
@@ -27,7 +27,7 @@ func NewStudentMailer(cfg config.Config) repositories.StudentMailer {
 	}
 }
 
-func (this mailer) SendNotification(ctx context.Context, student entities.Student, teacherEmail string, exam entities.Exam) error {
+func (this mailer) SendNotification(ctx context.Context, student models.Student, teacherEmail string, exam models.Exam) error {
 	if teacherEmail == "" {
 		return fmt.Errorf("teacher email is required")
 	}

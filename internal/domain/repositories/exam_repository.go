@@ -4,14 +4,9 @@ import (
 	"context"
 
 	"github.com/VanLavr/Diploma-fin/internal/domain/commands"
-	"github.com/VanLavr/Diploma-fin/internal/domain/entities"
+	entities "github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
-	"github.com/jackc/pgx/v5"
 )
-
-type Connector interface {
-	ConnectToPostgres(string) (pgx.Conn, error)
-}
 
 type ExamRepository interface {
 	GetDebts(context.Context, query.GetDebtsFilters) ([]entities.Debt, error)
