@@ -6,8 +6,8 @@ func main() {
 	// create POST /notification endpoint +
 
 	// --- for teacher
-	// create GET /allExams endpoint
-	// create POST /setDate endpoint
+	// create GET /allExams endpoint +
+	// create POST /setDate endpoint +
 
 	// --- infra
 	// create db schema
