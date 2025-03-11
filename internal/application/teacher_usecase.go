@@ -14,10 +14,7 @@ import (
 )
 
 type teacherUsecase struct {
-	examRepo      repositories.ExamRepository
-	studentRepo   repositories.StudentRepository
-	studentMailer repositories.StudentMailer
-	teacherRepo   repositories.TeacherRepository
+	repo repositories.Repository
 }
 
 func NewTeacherUsecase() logic.TeacherUsecase {
@@ -30,7 +27,7 @@ func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string
 		return log.ErrorWrapper(err, errors.ERR_APPLICATION, "")
 	}
 
-	debts, err := this.examRepo.GetDebts(ctx, query.GetDebtsFilters{
+	debts, err := this.repo.GetDebts(ctx, query.GetDebtsFilters{
 		DebtIDs: []int64{debtID},
 	})
 	if err != nil {
@@ -40,7 +37,7 @@ func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string
 		return log.ErrorWrapper(errors.ErroNoItemsFound, errors.ERR_APPLICATION, "")
 	}
 
-	if err = this.examRepo.UpdateDebt(ctx, commands.UpdateDebtByID{
+	if err = this.repo.UpdateDebt(ctx, commands.UpdateDebtByID{
 		DebtID:      debtID,
 		Date:        examDate,
 		TeacherUUID: teacherUUID,

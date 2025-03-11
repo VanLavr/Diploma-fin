@@ -7,14 +7,14 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/domain/entities"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type studentRepo struct {
-	db pgx.Conn
+	db *pgxpool.Pool
 }
 
-func NewStudentRepo(conn pgx.Conn) repositories.StudentRepository {
+func NewStudentRepo(conn *pgxpool.Pool) repositories.StudentRepository {
 	return &studentRepo{
 		db: conn,
 	}

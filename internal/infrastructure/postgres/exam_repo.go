@@ -11,14 +11,14 @@ import (
 	"github.com/VanLavr/Diploma-fin/pkg/errors"
 	"github.com/VanLavr/Diploma-fin/pkg/log"
 	"github.com/VanLavr/Diploma-fin/pkg/tools"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type examRepo struct {
-	db pgx.Conn
+	db *pgxpool.Pool
 }
 
-func NewExamRepo(conn pgx.Conn) repositories.ExamRepository {
+func NewExamRepo(conn *pgxpool.Pool) repositories.ExamRepository {
 	return &examRepo{
 		db: conn,
 	}

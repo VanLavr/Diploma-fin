@@ -13,10 +13,7 @@ import (
 )
 
 type studentUsecase struct {
-	examRepo      repositories.ExamRepository
-	studentRepo   repositories.StudentRepository
-	studentMailer repositories.StudentMailer
-	teacherRepo   repositories.TeacherRepository
+	repo repositories.Repository
 }
 
 func NewStudentUsecase() logic.StudentUsecase {
@@ -24,7 +21,7 @@ func NewStudentUsecase() logic.StudentUsecase {
 }
 
 func (this studentUsecase) GetAllDebts(ctx context.Context, UUID string) ([]types.Debt, error) {
-	debts, err := this.examRepo.GetDebts(ctx, query.GetDebtsFilters{
+	debts, err := this.repo.GetDebts(ctx, query.GetDebtsFilters{
 		StudentUUIDs: []string{UUID},
 	})
 
@@ -42,7 +39,7 @@ func (this studentUsecase) GetAllDebts(ctx context.Context, UUID string) ([]type
 
 func (this studentUsecase) SendNotification(ctx context.Context, UUID string, examID int64) error {
 	// get student personal data
-	students, err := this.studentRepo.GetStudents(ctx, query.GetStudentsFilters{
+	students, err := this.repo.GetStudents(ctx, query.GetStudentsFilters{
 		IDs: []string{UUID},
 	})
 	if len(students) == 0 {
@@ -53,7 +50,7 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 	}
 
 	// get debt by id
-	exams, err := this.examRepo.GetDebts(ctx, query.GetDebtsFilters{
+	exams, err := this.repo.GetDebts(ctx, query.GetDebtsFilters{
 		ExamIDs: []int64{examID},
 	})
 	if len(exams) == 0 {
@@ -64,7 +61,7 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 	}
 
 	// get teacher personal data
-	teachers, err := this.teacherRepo.GetTeachers(ctx, query.GetTeachersFilters{
+	teachers, err := this.repo.GetTeachers(ctx, query.GetTeachersFilters{
 		UUIDs: []string{exams[0].Teacher.UUID},
 	})
 	if len(teachers) == 0 {
@@ -75,7 +72,7 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 	}
 
 	// send notification
-	err = this.studentMailer.SendNotification(ctx, students[0], teachers[0].Email, entities.Exam{
+	err = this.repo.SendNotification(ctx, students[0], teachers[0].Email, entities.Exam{
 		ID:   examID,
 		Name: exams[0].Exam.Name,
 	})

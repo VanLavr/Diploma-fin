@@ -7,14 +7,14 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/domain/entities"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type teacherRepo struct {
-	db pgx.Conn
+	db *pgxpool.Pool
 }
 
-func NewTeacherRepo(conn pgx.Conn) repositories.TeacherRepository {
+func NewTeacherRepo(conn *pgxpool.Pool) repositories.TeacherRepository {
 	return &teacherRepo{
 		db: conn,
 	}
