@@ -1,8 +1,8 @@
 package query
 
 import (
-	"github.com/VanLavr/Diploma-fin/pkg/errors"
-	"github.com/VanLavr/Diploma-fin/pkg/log"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
 type GetTeachersFilters struct {

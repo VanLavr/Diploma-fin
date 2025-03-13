@@ -6,23 +6,24 @@ import (
 
 	"github.com/VanLavr/Diploma-fin/internal/controllers/dto"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
-	"github.com/VanLavr/Diploma-fin/pkg/errors"
-	"github.com/VanLavr/Diploma-fin/pkg/log"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/log"
 	"github.com/gin-gonic/gin"
 )
 
 type StudentHandler struct {
 	studentUsecase logic.StudentUsecase
-	gin            *gin.RouterGroup
 }
 
-func NewStudentHandler() *StudentHandler {
-	return &StudentHandler{}
+func NewStudentHandler(studentUsecase logic.StudentUsecase) *StudentHandler {
+	return &StudentHandler{
+		studentUsecase: studentUsecase,
+	}
 }
 
-func (this StudentHandler) RegisterRoutes() {
-	this.gin.GET("/all_debts/:UUID", this.getAllDebts)
-	this.gin.POST("/notification/:UUID/:examID", this.sendNotification)
+func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
+	group.GET("/all_debts/:UUID", this.getAllDebts)
+	group.POST("/notification/:UUID/:examID", this.sendNotification)
 }
 
 func (this StudentHandler) sendNotification(c *gin.Context) {

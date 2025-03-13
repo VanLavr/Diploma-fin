@@ -9,8 +9,8 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
-	"github.com/VanLavr/Diploma-fin/pkg/errors"
-	"github.com/VanLavr/Diploma-fin/pkg/log"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
 type teacherUsecase struct {

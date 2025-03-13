@@ -3,8 +3,8 @@ package commands
 import (
 	"time"
 
-	"github.com/VanLavr/Diploma-fin/pkg/errors"
-	"github.com/VanLavr/Diploma-fin/pkg/log"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
 type UpdateDebtByID struct {

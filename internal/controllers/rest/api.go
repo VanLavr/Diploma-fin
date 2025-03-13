@@ -1,0 +1,95 @@
+package rest
+
+import (
+	"context"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/VanLavr/Diploma-fin/utils/config"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+)
+
+type Server struct {
+	gin            *gin.Engine
+	cfg            *config.Config
+	studentHandler *StudentHandler
+	teacherHandler *TeacherHandler
+}
+
+func NewServer(cfg *config.Config, studentHandler *StudentHandler, teacherHandler *TeacherHandler) *Server {
+	return &Server{
+		cfg:            cfg,
+		studentHandler: studentHandler,
+		teacherHandler: teacherHandler,
+		gin:            gin.Default(),
+	}
+}
+
+func (s *Server) Start(c context.Context) error {
+	s.gin.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{
+			"Origin",
+			"Content-Type",
+			"Content-Length",
+			"Accept-Encoding",
+			"X-CSRF-Token",
+			"Authorization",
+			"ResponseType",
+			"accept",
+			"origin",
+			"Cache-Control",
+			"X-Request-With",
+		},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
+	s.setV1Routes(s.gin.Group("/api"))
+
+	server := &http.Server{
+		Addr:           ":" + s.cfg.Port,
+		Handler:        s.gin,
+		ReadTimeout:    time.Second * 20,
+		WriteTimeout:   time.Second * 20,
+		MaxHeaderBytes: 1 << 20,
+	}
+
+	ctx, stop := signal.NotifyContext(c, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	defer stop()
+
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatal(err)
+		}
+	}()
+
+	<-ctx.Done()
+
+	ctxt, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctxt); err != nil {
+		log.Fatal(err)
+	}
+
+	return nil
+}
+
+func (s *Server) setV1Routes(group *gin.RouterGroup) {
+	var v1 *gin.RouterGroup
+	if !s.cfg.WithJWTAuth {
+		v1 = group.Group("/v1")
+	} else {
+		v1 = group.Group("/v1")
+	}
+
+	s.studentHandler.RegisterRoutes(v1)
+	s.teacherHandler.RegisterRoutes(v1)
+}

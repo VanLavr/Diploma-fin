@@ -7,23 +7,25 @@ import (
 
 	"github.com/VanLavr/Diploma-fin/internal/controllers/dto"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
-	"github.com/VanLavr/Diploma-fin/pkg/errors"
-	"github.com/VanLavr/Diploma-fin/pkg/log"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
 type TeacherHandler struct {
 	teacherUsecase logic.TeacherUsecase
 	studentUsecase logic.StudentUsecase
-	gin            *gin.RouterGroup
 }
 
-func NewTeacherHandler() *TeacherHandler {
-	return &TeacherHandler{}
+func NewTeacherHandler(teacherUsecase logic.TeacherUsecase, studentUsecase logic.StudentUsecase) *TeacherHandler {
+	return &TeacherHandler{
+		teacherUsecase: teacherUsecase,
+		studentUsecase: studentUsecase,
+	}
 }
 
-func (this TeacherHandler) RegisterRoutes() {
-	this.gin.GET("/all_debts/:UUID", this.getAllDebts)
-	this.gin.POST("/set_date", this.setDate)
+func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
+	group.GET("/all_debts/:UUID", this.getAllDebts)
+	group.POST("/set_date", this.setDate)
 }
 
 func (this TeacherHandler) setDate(c *gin.Context) {

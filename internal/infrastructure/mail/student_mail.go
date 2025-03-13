@@ -8,7 +8,7 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
-	"github.com/VanLavr/Diploma-fin/pkg/config"
+	"github.com/VanLavr/Diploma-fin/utils/config"
 )
 
 type mailer struct {

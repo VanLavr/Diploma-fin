@@ -1,6 +1,6 @@
 package query
 
-import "github.com/VanLavr/Diploma-fin/pkg/errors"
+import "github.com/VanLavr/Diploma-fin/utils/errors"
 
 type GetDebtsFilters struct {
 	StudentUUIDs []string

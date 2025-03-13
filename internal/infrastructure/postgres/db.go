@@ -6,9 +6,9 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
 	"github.com/VanLavr/Diploma-fin/internal/infrastructure/mail"
-	"github.com/VanLavr/Diploma-fin/pkg/config"
-	"github.com/VanLavr/Diploma-fin/pkg/errors"
-	"github.com/VanLavr/Diploma-fin/pkg/log"
+	"github.com/VanLavr/Diploma-fin/utils/config"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/log"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -23,11 +23,6 @@ type repository struct {
 
 func NewRepository(
 	cfg *config.Config,
-	transactionRepo repositories.TransactionRepository,
-	examRepo repositories.ExamRepository,
-	studRepo repositories.StudentRepository,
-	teacherRepo repositories.TeacherRepository,
-	studMailer repositories.StudentMailer,
 ) repositories.Repository {
 	connector := NewConnector(cfg)
 	conn, err := connector.ConnectToPostgres(cfg)

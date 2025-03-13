@@ -8,9 +8,9 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
-	"github.com/VanLavr/Diploma-fin/pkg/errors"
-	"github.com/VanLavr/Diploma-fin/pkg/log"
-	"github.com/VanLavr/Diploma-fin/pkg/tools"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/log"
+	"github.com/VanLavr/Diploma-fin/utils/tools"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

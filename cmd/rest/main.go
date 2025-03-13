@@ -1,5 +1,15 @@
 package main
 
+import (
+	"context"
+
+	"github.com/VanLavr/Diploma-fin/internal/controllers/rest"
+	"github.com/VanLavr/Diploma-fin/internal/infrastructure/postgres"
+	application "github.com/VanLavr/Diploma-fin/internal/services"
+	"github.com/VanLavr/Diploma-fin/utils/config"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+)
+
 func main() {
 	// --- for student
 	// create GET /allDebts endpoint +
@@ -12,4 +22,20 @@ func main() {
 	// --- infra
 	// create db schema
 	// run all in docker containers
+
+	cfg, err := config.ReadConfig()
+	errors.FatalOnError(err)
+
+	repository := postgres.NewRepository(cfg)
+
+	studentApp := application.NewStudentUsecase(repository)
+	teacherApp := application.NewTeacherUsecase(repository)
+
+	server := rest.NewServer(
+		cfg,
+		rest.NewStudentHandler(studentApp),
+		rest.NewTeacherHandler(teacherApp, studentApp),
+	)
+
+	errors.FatalOnError(server.Start(context.Background()))
 }
