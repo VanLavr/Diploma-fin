@@ -2,6 +2,8 @@ package log
 
 import (
 	"fmt"
+	"log/slog"
+	"os"
 	"runtime"
 
 	"github.com/VanLavr/Diploma-fin/utils/errors"
@@ -33,3 +35,19 @@ func ErrorWrapper(err error, errType errors.ErrorType, desc string, params ...an
 	}
 	return fmt.Errorf("%s: %w", pattern, err)
 }
+
+func GetMethodName() string {
+	var funcName string
+	pc, _, _, ok := runtime.Caller(1)
+	details := runtime.FuncForPC(pc)
+	if ok && details != nil {
+		funcName = details.Name()
+	}
+
+	return funcName + "()"
+}
+
+var Logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+	AddSource: true,
+	Level:     slog.LevelDebug,
+}))

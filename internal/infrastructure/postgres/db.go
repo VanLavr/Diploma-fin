@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"time"
 
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
@@ -38,18 +39,55 @@ func NewRepository(
 	}
 }
 
-type connector struct{}
+type connector struct {
+	pool *pgxpool.Pool
+}
 
 func NewConnector(cfg *config.Config) repositories.Connector {
 	return &connector{}
 }
 
 func (c connector) ConnectToPostgres(cfg *config.Config) (*pgxpool.Pool, error) {
-	panic("not implemented")
+	// Create a configuration from the connection string
+	config, err := pgxpool.ParseConfig(cfg.DbString)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	// Set connection pool settings (optional)
+	config.MaxConns = 10                      // Maximum number of connections in the pool
+	config.MinConns = 2                       // Minimum number of connections in the pool
+	config.MaxConnLifetime = time.Hour        // Maximum lifetime of a connection
+	config.MaxConnIdleTime = time.Minute * 30 // Maximum idle time of a connection
+
+	// Create a connection pool
+	pool, err := pgxpool.NewWithConfig(context.Background(), config)
+	if err != nil {
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+	c.pool = pool
+
+	// Test the connection
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = pool.Ping(ctx)
+	if err != nil {
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	log.Logger.Info("connected to db")
+	return pool, nil
 }
 
 func (c connector) CloseConnectionWithPostgres(context.Context) error {
-	panic("not implemented")
+	if c.pool != nil {
+		c.pool.Close()
+		log.Logger.Info("connection to db closed")
+	}
+
+	return nil
 }
 
 type transaction struct {
