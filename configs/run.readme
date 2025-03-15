@@ -1,0 +1,10 @@
+sudo docker run -d \
+  --name pg \
+  -e POSTGRES_USER=ewan \
+  -e POSTGRES_PASSWORD=qwerty \
+  -e POSTGRES_DB=debts \
+  -e POSTGRESQL_ENABLE_INITIALIZE=false \
+  -e POSTGRESQL_PORT_NUMBER=5005 \
+  -p 5005:5005 \
+  -v pgdata:/var/lib/postgresql/data \
+  bitnami/postgresql

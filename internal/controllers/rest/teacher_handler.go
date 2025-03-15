@@ -24,7 +24,7 @@ func NewTeacherHandler(teacherUsecase logic.TeacherUsecase, studentUsecase logic
 }
 
 func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("/all_debts/:UUID", this.getAllDebts)
+	group.GET("/teacher/all_debts/:UUID", this.getAllDebts)
 	group.POST("/set_date", this.setDate)
 }
 

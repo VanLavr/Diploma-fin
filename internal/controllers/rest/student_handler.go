@@ -22,7 +22,7 @@ func NewStudentHandler(studentUsecase logic.StudentUsecase) *StudentHandler {
 }
 
 func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("/all_debts/:UUID", this.getAllDebts)
+	group.GET("/student/all_debts/:UUID", this.getAllDebts)
 	group.POST("/notification/:UUID/:examID", this.sendNotification)
 }
 
