@@ -84,6 +84,11 @@ func (s *Server) Start(c context.Context) error {
 
 func (s *Server) setV1Routes(group *gin.RouterGroup) {
 	var v1 *gin.RouterGroup
+	group.GET("/healthcheck", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"Health-check": "ok",
+		})
+	})
 	if !s.cfg.WithJWTAuth {
 		v1 = group.Group("/v1")
 	} else {

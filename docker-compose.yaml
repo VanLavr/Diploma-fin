@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: bitnami/postgresql
+    environment:
+      - POSTGRES_USER=ewan
+      - POSTGRES_DB=debts
+      - POSTGRES_PASSWORD=qwerty
+      - POSTGRESQL_ENABLE_INITIALIZE=false
+      - POSTGRESQL_PORT_NUMBER=5005
+    ports:
+      - "5005:5005"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    image: ewanlav/diploma:latest
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs:/app/configs
+
+volumes:
+  pgdata:
