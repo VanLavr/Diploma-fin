@@ -9,9 +9,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/VanLavr/Diploma-fin/utils/config"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	"github.com/VanLavr/Diploma-fin/utils/config"
 )
 
 type Server struct {

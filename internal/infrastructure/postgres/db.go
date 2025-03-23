@@ -4,13 +4,14 @@ import (
 	"context"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
 	"github.com/VanLavr/Diploma-fin/internal/infrastructure/mail"
 	"github.com/VanLavr/Diploma-fin/utils/config"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/VanLavr/Diploma-fin/utils/log"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type repository struct {
@@ -47,7 +48,7 @@ func NewConnector(cfg *config.Config) repositories.Connector {
 	return &connector{}
 }
 
-func (c connector) ConnectToPostgres(cfg *config.Config) (*pgxpool.Pool, error) {
+func (c *connector) ConnectToPostgres(cfg *config.Config) (*pgxpool.Pool, error) {
 	// Create a configuration from the connection string
 	config, err := pgxpool.ParseConfig(cfg.DbString)
 	if err != nil {
@@ -81,7 +82,7 @@ func (c connector) ConnectToPostgres(cfg *config.Config) (*pgxpool.Pool, error) 
 	return pool, nil
 }
 
-func (c connector) CloseConnectionWithPostgres(context.Context) error {
+func (c *connector) CloseConnectionWithPostgres(context.Context) error {
 	if c.pool != nil {
 		c.pool.Close()
 		log.Logger.Info("connection to db closed")

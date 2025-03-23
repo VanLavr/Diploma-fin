@@ -3,8 +3,9 @@ package repositories
 import (
 	"context"
 
-	"github.com/VanLavr/Diploma-fin/utils/config"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/VanLavr/Diploma-fin/utils/config"
 )
 
 type Repository interface {
