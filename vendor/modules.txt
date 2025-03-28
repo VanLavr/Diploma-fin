@@ -147,9 +147,6 @@ github.com/magiconair/properties
 # github.com/mattn/go-isatty v0.0.20
 ## explicit; go 1.15
 github.com/mattn/go-isatty
-# github.com/mfridman/interpolate v0.0.2
-## explicit; go 1.19
-github.com/mfridman/interpolate
 # github.com/mitchellh/mapstructure v1.5.0
 ## explicit; go 1.14
 github.com/mitchellh/mapstructure
@@ -166,16 +163,6 @@ github.com/pelletier/go-toml/v2/internal/characters
 github.com/pelletier/go-toml/v2/internal/danger
 github.com/pelletier/go-toml/v2/internal/tracker
 github.com/pelletier/go-toml/v2/unstable
-# github.com/pressly/goose/v3 v3.24.1
-## explicit; go 1.21.0
-github.com/pressly/goose/v3
-github.com/pressly/goose/v3/database
-github.com/pressly/goose/v3/internal/controller
-github.com/pressly/goose/v3/internal/dialect
-github.com/pressly/goose/v3/internal/dialect/dialectquery
-github.com/pressly/goose/v3/internal/gooseutil
-github.com/pressly/goose/v3/internal/sqlparser
-github.com/pressly/goose/v3/lock
 # github.com/rogpeppe/go-internal v1.14.1
 ## explicit; go 1.23
 # github.com/sagikazarmark/locafero v0.4.0
@@ -184,9 +171,6 @@ github.com/sagikazarmark/locafero
 # github.com/sagikazarmark/slog-shim v0.1.0
 ## explicit; go 1.20
 github.com/sagikazarmark/slog-shim
-# github.com/sethvargo/go-retry v0.3.0
-## explicit; go 1.21
-github.com/sethvargo/go-retry
 # github.com/sourcegraph/conc v0.3.0
 ## explicit; go 1.19
 github.com/sourcegraph/conc
@@ -216,6 +200,8 @@ github.com/spf13/viper/internal/encoding/json
 github.com/spf13/viper/internal/encoding/toml
 github.com/spf13/viper/internal/encoding/yaml
 github.com/spf13/viper/internal/features
+# github.com/stretchr/testify v1.10.0
+## explicit; go 1.17
 # github.com/subosito/gotenv v1.6.0
 ## explicit; go 1.18
 github.com/subosito/gotenv
@@ -269,7 +255,6 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 # golang.org/x/sync v0.10.0
 ## explicit; go 1.18
-golang.org/x/sync/errgroup
 golang.org/x/sync/semaphore
 # golang.org/x/sys v0.28.0
 ## explicit; go 1.18
