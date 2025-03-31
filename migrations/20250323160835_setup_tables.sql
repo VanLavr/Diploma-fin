@@ -1,5 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 create table if not exists groups(
     id serial primary key,
     name text
@@ -30,15 +32,16 @@ create table if not exists debts(
     id serial primary key,
     exam_id integer references exams(id),
     student_uuid text references students(uuid),
-    teacher_uuid text references teachers(uuid)
+    teacher_uuid text references teachers(uuid),
+    date time
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-drop table groups;
-drop table exams;
-drop table students;
-drop table teachers;
 drop table debts;
+drop table teachers;
+drop table students;
+drop table exams;
+drop table groups;
 -- +goose StatementEnd

@@ -1,14 +1,16 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/VanLavr/Diploma-fin/internal/controllers/dto"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/VanLavr/Diploma-fin/utils/log"
-	"github.com/gin-gonic/gin"
 )
 
 type StudentHandler struct {
@@ -28,6 +30,7 @@ func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
 
 func (this StudentHandler) sendNotification(c *gin.Context) {
 	id := c.Param("examID")
+	fmt.Println("1")
 	examID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		log.ErrorWrapper(err, errors.ERR_INTERFACES, "wrong examen id")
@@ -36,15 +39,23 @@ func (this StudentHandler) sendNotification(c *gin.Context) {
 		})
 		return
 	}
+	fmt.Println("2")
 
 	switch err := this.studentUsecase.SendNotification(c.Request.Context(), c.Param("UUID"), examID); err {
 	case nil:
 	default:
+		fmt.Println("3")
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err,
 		})
 		return
 	}
+
+	fmt.Println("4")
+	c.JSON(http.StatusOK, dto.GetAllDebtsDTO{
+		Err:  nil,
+		Data: nil,
+	})
 }
 
 func (this StudentHandler) getAllDebts(c *gin.Context) {

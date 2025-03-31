@@ -4,10 +4,11 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type teacherRepo struct {
@@ -34,7 +35,7 @@ func (this teacherRepo) GetTeachers(ctx context.Context, filters query.GetTeache
 			"email",
 		).
 		From("teachers").
-		Where(sq.Eq{"id": filters.UUIDs}).
+		Where(sq.Eq{"uuid": filters.UUIDs}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

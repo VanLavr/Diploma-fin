@@ -3,8 +3,9 @@ package config
 import (
 	"fmt"
 
-	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/spf13/viper"
+
+	"github.com/VanLavr/Diploma-fin/utils/errors"
 )
 
 type Config struct {
@@ -15,6 +16,7 @@ type Config struct {
 	Port              string `env:"PORT"`
 	WithJWTAuth       bool   `env:"WITHJWTAUTH"`
 	DbString          string `env:"DBSTRING"`
+	SMTP2OAuthCode    string `env:"SMTP2OAUTHCODE"`
 }
 
 func ReadConfig() (*Config, error) {
@@ -31,6 +33,7 @@ func ReadConfig() (*Config, error) {
 		Port:              v.GetString("PORT"),
 		WithJWTAuth:       v.GetBool("WITHJWTAUTH"),
 		DbString:          v.GetString("DBSTRING"),
+		SMTP2OAuthCode:    v.GetString("SMTP2OAUTHCODE"),
 	}
 	fmt.Println(config)
 

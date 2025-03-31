@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
@@ -41,15 +42,19 @@ func (this studentUsecase) GetAllDebts(ctx context.Context, UUID string) ([]type
 
 func (this studentUsecase) SendNotification(ctx context.Context, UUID string, examID int64) error {
 	// get student personal data
+	fmt.Println("10")
 	students, err := this.repo.GetStudents(ctx, query.GetStudentsFilters{
 		IDs: []string{UUID},
 	})
 	if len(students) == 0 {
+		fmt.Println("11")
 		return log.ErrorWrapper(errors.ErroNoItemsFound, errors.ERR_APPLICATION, "")
 	}
 	if err != nil {
+		fmt.Println("12")
 		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
+	fmt.Println("5")
 
 	// get debt by id
 	exams, err := this.repo.GetDebts(ctx, query.GetDebtsFilters{
@@ -61,6 +66,7 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 	if err != nil {
 		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
+	fmt.Println("6")
 
 	// get teacher personal data
 	teachers, err := this.repo.GetTeachers(ctx, query.GetTeachersFilters{
@@ -72,6 +78,7 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 	if err != nil {
 		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
+	fmt.Println("7")
 
 	// send notification
 	err = this.repo.SendNotification(ctx, students[0], teachers[0].Email, models.Exam{
@@ -81,6 +88,7 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 	if err != nil {
 		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
+	fmt.Println("8")
 
 	return nil
 }

@@ -9,7 +9,7 @@ type Exam struct {
 
 type Debt struct {
 	ID      int64
-	Date    time.Time
+	Date    *time.Time
 	Exam    *Exam
 	Student *Student
 	Teacher *Teacher

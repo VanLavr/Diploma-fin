@@ -4,10 +4,13 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
 type studentRepo struct {
@@ -36,15 +39,17 @@ func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStuden
 		).
 		From("students s").
 		LeftJoin("groups g ON s.group_id = g.id").
-		Where(sq.Eq{"student_uuid": filters.IDs}).
+		Where(sq.Eq{"uuid": filters.IDs}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, err
 	}
 
 	rows, err := this.db.Query(ctx, sql, args...)
 	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, err
 	}
 
@@ -59,6 +64,7 @@ func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStuden
 			&stdnt.Group.ID,
 			&stdnt.Group.Name,
 		); err != nil {
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 			return nil, err
 		}
 

@@ -4,6 +4,8 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/VanLavr/Diploma-fin/internal/domain/commands"
 	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
@@ -11,7 +13,6 @@ import (
 	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 	"github.com/VanLavr/Diploma-fin/utils/tools"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type examRepo struct {
@@ -63,8 +64,8 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 	}
 
 	query := sq.Select(
-		"e.exam_id",
-		"e.exam_name",
+		"e.id",
+		"e.name",
 		"t.uuid",
 		"t.first_name",
 		"t.last_name",
@@ -76,18 +77,18 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 		"d.date",
 	)
 	query = query.From("debts d")
+	query = query.LeftJoin("students s ON d.student_uuid = s.uuid")
+	query = query.LeftJoin("teachers t ON d.teacher_uuid = t.uuid")
+	query = query.LeftJoin("exams e ON d.exam_id = e.id")
 
 	if len(filters.StudentUUIDs) > 0 {
-		query = query.LeftJoin("students s ON d.student_uuid = s.uuid")
-		query = query.Where(sq.Eq{"s.student_uuid": filters.StudentUUIDs})
+		query = query.Where(sq.Eq{"s.uuid": filters.StudentUUIDs})
 	}
 	if len(filters.TeacherUUIDs) > 0 {
-		query = query.LeftJoin("teachers t ON d.teacher_uuid = t.uuid")
-		query = query.Where(sq.Eq{"t.teacher_uuid": filters.TeacherUUIDs})
+		query = query.Where(sq.Eq{"t.uuid": filters.TeacherUUIDs})
 	}
 	if len(filters.ExamIDs) > 0 {
-		query = query.LeftJoin("exams e ON d.exam_id = e.id")
-		query = query.Where(sq.Eq{"e.exam_id": filters.ExamIDs})
+		query = query.Where(sq.Eq{"e.id": filters.ExamIDs})
 	}
 	if len(filters.DebtIDs) > 0 {
 		query = query.Where(sq.Eq{"d.id": filters.DebtIDs})
@@ -96,17 +97,23 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 	sql, args, err := query.ToSql()
 
 	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "can not build sql")
 	}
 
 	rows, err := this.db.Query(ctx, sql, args...)
 	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "can not perform query")
 	}
 
 	var result []models.Debt
 	for rows.Next() {
-		var debt models.Debt
+		debt := models.Debt{
+			Exam:    &models.Exam{},
+			Student: &models.Student{},
+			Teacher: &models.Teacher{},
+		}
 		if err := rows.Scan(
 			&debt.Exam.ID,
 			&debt.Exam.Name,
@@ -120,6 +127,7 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 			&debt.Student.MiddleName,
 			&debt.Date,
 		); err != nil {
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 			return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "can not scan result")
 		}
 
