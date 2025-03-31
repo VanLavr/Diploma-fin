@@ -22,6 +22,15 @@ services:
       - "8080:8080"
     volumes:
       - ./configs:/app/configs
+  
+  migrate:
+    image: golang:1.23-alpine
+    depends_on:
+      - postgres
+    volumes:
+      - ./migrations:/migrations
+    working_dir: /migrations
+    command: sh -c "go install github.com/pressly/goose/v3/cmd/goose@latest && goose postgres 'user=ewan password=qwerty dbname=debts host=postgres port=5005 sslmode=disable' up"
 
 volumes:
   pgdata:

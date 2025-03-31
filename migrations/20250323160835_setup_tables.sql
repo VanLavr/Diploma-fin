@@ -1,12 +1,12 @@
 -- +goose Up
 -- +goose StatementBegin
 create table if not exists groups(
-    id serial,
-    name text,
+    id serial primary key,
+    name text
 );
 
 create table if not exists students(
-    uuid text,
+    uuid text primary key,
     first_name text,
     last_name text,
     middle_name text,
@@ -14,7 +14,7 @@ create table if not exists students(
 );
 
 create table if not exists teachers(
-    uuid text,
+    uuid text primary key,
     first_name text,
     last_name text,
     middle_name text,
@@ -22,12 +22,12 @@ create table if not exists teachers(
 );
 
 create table if not exists exams(
-    id integer,
+    id serial primary key,
     name text
 );
 
 create table if not exists debts(
-    id integer,
+    id serial primary key,
     exam_id integer references exams(id),
     student_uuid text references students(uuid),
     teacher_uuid text references teachers(uuid)
