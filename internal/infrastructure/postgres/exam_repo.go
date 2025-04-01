@@ -60,10 +60,12 @@ func (this examRepo) GetExams(ctx context.Context, filters query.GetExamsFilters
 
 func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters) ([]models.Debt, error) {
 	if err := filters.Validate(); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "invalid filters")
 	}
 
 	query := sq.Select(
+		"d.id",
 		"e.id",
 		"e.name",
 		"t.uuid",
@@ -115,6 +117,7 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 			Teacher: &models.Teacher{},
 		}
 		if err := rows.Scan(
+			&debt.ID,
 			&debt.Exam.ID,
 			&debt.Exam.Name,
 			&debt.Teacher.UUID,

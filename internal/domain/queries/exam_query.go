@@ -1,6 +1,8 @@
 package query
 
-import "github.com/VanLavr/Diploma-fin/utils/errors"
+import (
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+)
 
 type GetDebtsFilters struct {
 	StudentUUIDs []string
@@ -24,10 +26,6 @@ func (this *GetDebtsFilters) Validate() error {
 		if id == 0 {
 			return errors.ErrInvalidFilters
 		}
-	}
-
-	if len(this.StudentUUIDs) == 0 && len(this.TeacherUUIDs) == 0 && len(this.ExamIDs) == 0 {
-		return errors.ErrInvalidFilters
 	}
 
 	return nil

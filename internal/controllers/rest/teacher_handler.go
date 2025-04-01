@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,7 @@ func (this TeacherHandler) setDate(c *gin.Context) {
 		})
 		return
 	}
+	fmt.Println(request)
 
 	switch err := this.teacherUsecase.SetDate(c.Request.Context(), request.TeacherUUID, request.ExamDate, request.DebtID); err {
 	case nil:
@@ -48,7 +50,7 @@ func (this TeacherHandler) setDate(c *gin.Context) {
 }
 
 func (this TeacherHandler) getAllDebts(c *gin.Context) {
-	debts, err := this.studentUsecase.GetAllDebts(c.Request.Context(), c.Param("UUID"))
+	debts, err := this.teacherUsecase.GetAllDebts(c.Request.Context(), c.Param("UUID"))
 	switch {
 	case err == nil:
 	default:

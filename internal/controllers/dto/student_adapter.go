@@ -29,9 +29,13 @@ func DebtDTOFromTypes(src types.Debt) Debt {
 		student.MiddleName = src.Student.MiddleName
 	}
 
+	var date string
+	if src.Date != nil {
+		date = src.Date.Format(time.RFC3339)
+	}
 	return Debt{
 		ID:      src.ID,
-		Date:    src.Date.Format(time.RFC3339),
+		Date:    date,
 		Exam:    &ex,
 		Teacher: &teacher,
 		Student: &student,

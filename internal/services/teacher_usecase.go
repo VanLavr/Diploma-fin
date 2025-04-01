@@ -9,6 +9,7 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
+	"github.com/VanLavr/Diploma-fin/internal/services/types"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
@@ -23,9 +24,27 @@ func NewTeacherUsecase(repo repositories.Repository) logic.TeacherUsecase {
 	}
 }
 
+func (t teacherUsecase) GetAllDebts(ctx context.Context, UUID string) ([]types.Debt, error) {
+	debts, err := t.repo.GetDebts(ctx, query.GetDebtsFilters{
+		TeacherUUIDs: []string{UUID},
+	})
+
+	result := make([]types.Debt, len(debts))
+	for i, debt := range debts {
+		result[i] = types.DebtFromDomain(&debt)
+	}
+
+	if err != nil {
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return result, nil
+}
+
 func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string, debtID int64) error {
 	examDate, err := time.Parse(valueobjects.DateLayout, date)
 	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return log.ErrorWrapper(err, errors.ERR_APPLICATION, "")
 	}
 
@@ -33,9 +52,11 @@ func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string
 		DebtIDs: []int64{debtID},
 	})
 	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
 	if len(debts) > 1 || len(debts) == 0 {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return log.ErrorWrapper(errors.ErroNoItemsFound, errors.ERR_APPLICATION, "")
 	}
 
@@ -45,6 +66,7 @@ func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string
 		TeacherUUID: teacherUUID,
 		StudentUUID: debts[0].Student.UUID,
 	}); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
 

@@ -33,7 +33,7 @@ create table if not exists debts(
     exam_id integer references exams(id),
     student_uuid text references students(uuid),
     teacher_uuid text references teachers(uuid),
-    date time
+    date timestamp
 );
 -- +goose StatementEnd
 
