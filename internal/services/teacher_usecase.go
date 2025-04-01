@@ -55,8 +55,8 @@ func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
-	if len(debts) > 1 || len(debts) == 0 {
-		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+	if len(debts) < 1 || len(debts) == 0 {
+		log.Logger.Error("no debts", errors.MethodKey, log.GetMethodName())
 		return log.ErrorWrapper(errors.ErroNoItemsFound, errors.ERR_APPLICATION, "")
 	}
 
