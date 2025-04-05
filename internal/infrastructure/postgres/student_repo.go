@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -38,6 +39,8 @@ func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStuden
 		"g.name",
 	).From("students s")
 
+	query = query.LeftJoin("groups g ON s.group_id = g.id")
+
 	if len(filters.IDs) != 0 {
 		query = query.Where(sq.Eq{"uuid": filters.IDs})
 	}
@@ -52,6 +55,7 @@ func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStuden
 
 	rows, err := this.db.Query(ctx, sql, args...)
 	if err != nil {
+		fmt.Println("here", err)
 		return nil, err
 	}
 

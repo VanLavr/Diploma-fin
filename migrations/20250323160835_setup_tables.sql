@@ -12,6 +12,7 @@ create table if not exists students(
     first_name text,
     last_name text,
     middle_name text,
+    email text,
     group_id integer references groups(id)
 );
 

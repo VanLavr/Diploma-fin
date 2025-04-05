@@ -26,8 +26,8 @@ func NewAuthHandler(teacherUsecase logic.TeacherUsecase, studentUsecase logic.St
 }
 
 func (a AuthHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("/teacher/login", a.TeacherLogin)
-	group.GET("/student/login", a.StudentLogin)
+	group.POST("/teacher/login", a.TeacherLogin)
+	group.POST("/student/login", a.StudentLogin)
 }
 
 func (a AuthHandler) TeacherLogin(c *gin.Context) {
@@ -85,6 +85,7 @@ func (a AuthHandler) StudentLogin(c *gin.Context) {
 		})
 		return
 	}
+	fmt.Println("got")
 
 	if len(students) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{

@@ -97,6 +97,7 @@ func (s studentUsecase) GetStudentByEmail(ctx context.Context, email string) ([]
 	students, err := s.repo.GetStudents(ctx, query.GetStudentsFilters{
 		Emails: []string{email},
 	})
+	fmt.Println("got stud", students)
 
 	result := make([]types.Student, len(students))
 	for i, student := range students {

@@ -12,7 +12,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/VanLavr/Diploma-fin/utils/auth"
 	"github.com/VanLavr/Diploma-fin/utils/config"
 )
 
@@ -21,13 +20,15 @@ type Server struct {
 	cfg            *config.Config
 	studentHandler *StudentHandler
 	teacherHandler *TeacherHandler
+	authHandler    *AuthHandler
 }
 
-func NewServer(cfg *config.Config, studentHandler *StudentHandler, teacherHandler *TeacherHandler) *Server {
+func NewServer(cfg *config.Config, studentHandler *StudentHandler, teacherHandler *TeacherHandler, authHandler *AuthHandler) *Server {
 	return &Server{
 		cfg:            cfg,
 		studentHandler: studentHandler,
 		teacherHandler: teacherHandler,
+		authHandler:    authHandler,
 		gin:            gin.Default(),
 	}
 }
@@ -86,18 +87,22 @@ func (s *Server) Start(c context.Context) error {
 
 func (s *Server) setV1Routes(group *gin.RouterGroup) {
 	var v1 *gin.RouterGroup
+	var v1Auth *gin.RouterGroup
+
 	group.GET("/healthcheck", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"Health-check": "ok",
 		})
 	})
+
 	if !s.cfg.WithJWTAuth {
 		v1 = group.Group("/v1")
 	} else {
-		jwt := auth.NewAuthMiddleware(s.cfg)
-		v1 = group.Group("/v1", jwt.ValidateAccessToken())
+		v1Auth = group.Group("/auth")
+		v1 = group.Group("/v1", s.authHandler.auth.ValidateAccessToken())
 	}
 
+	s.authHandler.RegisterRoutes(v1Auth)
 	s.studentHandler.RegisterRoutes(v1)
 	s.teacherHandler.RegisterRoutes(v1)
 }

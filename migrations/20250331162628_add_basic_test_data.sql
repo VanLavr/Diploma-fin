@@ -31,9 +31,10 @@ INSERT INTO students(
     first_name,
     last_name,
     middle_name,
+    email,
     group_id
 ) VALUES 
-    (uuid_generate_v4(), 'Ivan', 'Lavrushko', 'Evgenievich', 1);
+    (uuid_generate_v4(), 'Ivan', 'Lavrushko', 'Evgenievich', 'ahaha@mail.com', 1);
 
 -- Insert debt (FIXED: removed trailing comma)
 INSERT INTO debts(
