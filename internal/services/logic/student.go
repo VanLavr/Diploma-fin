@@ -9,4 +9,5 @@ import (
 type StudentUsecase interface {
 	GetAllDebts(context.Context, string) ([]types.Debt, error)
 	SendNotification(context.Context, string, int64) error
+	GetStudentByEmail(context.Context, string) ([]types.Student, error)
 }

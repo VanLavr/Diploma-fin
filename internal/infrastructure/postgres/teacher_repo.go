@@ -26,18 +26,22 @@ func (this teacherRepo) GetTeachers(ctx context.Context, filters query.GetTeache
 		return nil, err
 	}
 
-	sql, args, err := sq.
-		Select(
-			"uuid",
-			"first_name",
-			"last_name",
-			"middle_name",
-			"email",
-		).
-		From("teachers").
-		Where(sq.Eq{"uuid": filters.UUIDs}).
-		PlaceholderFormat(sq.Dollar).
-		ToSql()
+	query := sq.Select(
+		"uuid",
+		"first_name",
+		"last_name",
+		"middle_name",
+		"email",
+	).From("teachers")
+
+	if len(filters.UUIDs) != 0 {
+		query = query.Where(sq.Eq{"uuid": filters.UUIDs})
+	}
+	if len(filters.Emails) != 0 {
+		query = query.Where(sq.Eq{"email": filters.Emails})
+	}
+
+	sql, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return nil, err
 	}

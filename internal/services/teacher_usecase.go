@@ -72,3 +72,20 @@ func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string
 
 	return nil
 }
+
+func (t teacherUsecase) GetTeacherByEmail(ctx context.Context, email string) ([]types.Teacher, error) {
+	teachers, err := t.repo.GetTeachers(ctx, query.GetTeachersFilters{
+		Emails: []string{email},
+	})
+
+	result := make([]types.Teacher, len(teachers))
+	for i, teacher := range teachers {
+		result[i] = types.TeacherFromDomain(&teacher)
+	}
+
+	if err != nil {
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return result, nil
+}

@@ -92,3 +92,20 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 
 	return nil
 }
+
+func (s studentUsecase) GetStudentByEmail(ctx context.Context, email string) ([]types.Student, error) {
+	students, err := s.repo.GetStudents(ctx, query.GetStudentsFilters{
+		Emails: []string{email},
+	})
+
+	result := make([]types.Student, len(students))
+	for i, student := range students {
+		result[i] = types.StudentFromDomain(&student)
+	}
+
+	if err != nil {
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return result, nil
+}

@@ -17,6 +17,7 @@ type Config struct {
 	WithJWTAuth       bool   `env:"WITHJWTAUTH"`
 	DbString          string `env:"DBSTRING"`
 	SMTP2OAuthCode    string `env:"SMTP2OAUTHCODE"`
+	Secret            string `env:"SECRET"`
 }
 
 func ReadConfig() (*Config, error) {
@@ -34,6 +35,7 @@ func ReadConfig() (*Config, error) {
 		WithJWTAuth:       v.GetBool("WITHJWTAUTH"),
 		DbString:          v.GetString("DBSTRING"),
 		SMTP2OAuthCode:    v.GetString("SMTP2OAUTHCODE"),
+		Secret:            v.GetString("SECRET"),
 	}
 	fmt.Println(config)
 

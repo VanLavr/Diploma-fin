@@ -35,3 +35,22 @@ func DebtFromDomain(src *entities.Debt) Debt {
 		Student: &student,
 	}
 }
+
+func TeacherFromDomain(src *entities.Teacher) Teacher {
+	return Teacher{
+		UUID:       src.UUID,
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		Email:      src.Email,
+	}
+}
+func StudentFromDomain(src *entities.Student) Student {
+	return Student{
+		UUID:       src.UUID,
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		Email:      src.Email,
+	}
+}

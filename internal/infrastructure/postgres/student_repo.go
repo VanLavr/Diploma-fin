@@ -28,28 +28,30 @@ func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStuden
 		return nil, err
 	}
 
-	sql, args, err := sq.
-		Select(
-			"s.uuid",
-			"s.first_name",
-			"s.last_name",
-			"s.middle_name",
-			"s.group_id",
-			"g.name",
-		).
-		From("students s").
-		LeftJoin("groups g ON s.group_id = g.id").
-		Where(sq.Eq{"uuid": filters.IDs}).
-		PlaceholderFormat(sq.Dollar).
-		ToSql()
+	query := sq.Select(
+		"s.uuid",
+		"s.first_name",
+		"s.last_name",
+		"s.middle_name",
+		"s.group_id",
+		"s.email",
+		"g.name",
+	).From("students s")
+
+	if len(filters.IDs) != 0 {
+		query = query.Where(sq.Eq{"uuid": filters.IDs})
+	}
+	if len(filters.Emails) != 0 {
+		query = query.Where(sq.Eq{"email": filters.Emails})
+	}
+
+	sql, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
-		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, err
 	}
 
 	rows, err := this.db.Query(ctx, sql, args...)
 	if err != nil {
-		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, err
 	}
 
@@ -62,6 +64,7 @@ func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStuden
 			&stdnt.LastName,
 			&stdnt.MiddleName,
 			&stdnt.Group.ID,
+			&stdnt.Email,
 			&stdnt.Group.Name,
 		); err != nil {
 			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

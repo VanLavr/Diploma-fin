@@ -12,6 +12,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
+	"github.com/VanLavr/Diploma-fin/utils/auth"
 	"github.com/VanLavr/Diploma-fin/utils/config"
 )
 
@@ -93,7 +94,8 @@ func (s *Server) setV1Routes(group *gin.RouterGroup) {
 	if !s.cfg.WithJWTAuth {
 		v1 = group.Group("/v1")
 	} else {
-		v1 = group.Group("/v1")
+		jwt := auth.NewAuthMiddleware(s.cfg)
+		v1 = group.Group("/v1", jwt.ValidateAccessToken())
 	}
 
 	s.studentHandler.RegisterRoutes(v1)

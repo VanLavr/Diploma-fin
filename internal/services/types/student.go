@@ -5,6 +5,7 @@ type Student struct {
 	FirstName  string
 	LastName   string
 	MiddleName string
+	Email      string
 	Group      *Group
 }
 

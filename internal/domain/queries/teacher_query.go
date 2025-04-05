@@ -6,12 +6,18 @@ import (
 )
 
 type GetTeachersFilters struct {
-	UUIDs []string
+	UUIDs  []string
+	Emails []string
 }
 
 func (this GetTeachersFilters) Validate() error {
-	if len(this.UUIDs) == 0 {
+	if len(this.Emails) == 0 && len(this.UUIDs) == 0 {
 		return log.ErrorWrapper(errors.ErrInvalidFilters, errors.ERR_DOMAIN, "")
+	}
+	for _, email := range this.Emails {
+		if email == "" {
+			return log.ErrorWrapper(errors.ErrInvalidFilters, errors.ERR_DOMAIN, "")
+		}
 	}
 	for _, id := range this.UUIDs {
 		if id == "" {
