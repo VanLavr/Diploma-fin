@@ -29,7 +29,7 @@ func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
 	group.POST("/student", this.CreateStudent)
 	group.PUT("/student", this.UpdateStudent)
 	group.DELETE("/student/:uuid", this.DeleteStduent)
-	group.GET("student/all/:limit/:offset", this.GetStudents)
+	group.GET("/student/all/:limit/:offset", this.GetStudents)
 }
 
 func (this StudentHandler) GetStudents(c *gin.Context) {

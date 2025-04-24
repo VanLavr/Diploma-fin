@@ -46,10 +46,34 @@ func TypesStudentFromCreateStudentDTO(src CreateStudentDTO) types.Student {
 	return types.Student{}
 }
 
+func TypesExamFromCreateExamDTO(src CreateExamDTO) types.Debt {
+	return types.Debt{}
+}
+
 func TypeStudentFromUpdateStudentDTO(src UpdateStudentDTO) types.Student {
 	return types.Student{}
 }
 
 func StudentDTOFromTypes(src types.Student) Student {
 	return Student{}
+}
+
+func TeacherDTOFromTypes(src types.Teacher) Teacher {
+	return Teacher{}
+}
+
+func TypesTeacherFromCreateTeacherDTO(src CreateTeacherDTO) types.Teacher {
+	return types.Teacher{}
+}
+
+func TypesTeacherFromUpdateTeachertDTO(src UpdateTeacherDTO) types.Teacher {
+	return types.Teacher{}
+}
+
+func ExamDTOFromTypes(src types.Debt) Debt {
+	return Debt{}
+}
+
+func TypesExamFromUpdateExamDTO(src UpdateExamDTO) types.Debt {
+	return types.Debt{}
 }

@@ -5,12 +5,27 @@ type GetAllStudentsDTO struct {
 	Data []Student `json:"data"`
 }
 
+type GetAllTeachersDTO struct {
+	Err  error     `json:"error"`
+	Data []Teacher `json:"data"`
+}
+
 type GetAllDebtsDTO struct {
 	Err  error  `json:"error"`
 	Data []Debt `json:"data"`
 }
 
 type CreateStudentResponseDTO struct {
+	Err  error  `json:"error"`
+	Data string `json:"UUID"`
+}
+
+type CreateExamResponseDTO struct {
+	Err  error `json:"error"`
+	Data int   `json:"id"`
+}
+
+type CreateTeacherResponseDTO struct {
 	Err  error  `json:"error"`
 	Data string `json:"UUID"`
 }
@@ -39,7 +54,23 @@ type Debt struct {
 	Exam    *Exam    `json:"exam"`
 }
 
+type CreateExamDTO struct {
+	FirstName  string `json:"first_name"`
+	LastName   string `json:"last_name"`
+	MiddleName string `json:"middle_name"`
+	Group      Group  `json:"group"`
+	Email      string `json:"email"`
+}
+
 type CreateStudentDTO struct {
+	FirstName  string `json:"first_name"`
+	LastName   string `json:"last_name"`
+	MiddleName string `json:"middle_name"`
+	Group      Group  `json:"group"`
+	Email      string `json:"email"`
+}
+
+type CreateTeacherDTO struct {
 	FirstName  string `json:"first_name"`
 	LastName   string `json:"last_name"`
 	MiddleName string `json:"middle_name"`
@@ -59,4 +90,16 @@ type UpdateStudentDTO struct {
 	MiddleName string `json:"middle_name"`
 	Group      Group  `json:"group"`
 	Email      string `json:"email"`
+}
+
+type UpdateTeacherDTO struct {
+	UUID       string `json:"uuid"`
+	FirstName  string `json:"first_name"`
+	LastName   string `json:"last_name"`
+	MiddleName string `json:"middle_name"`
+	Group      Group  `json:"group"`
+	Email      string `json:"email"`
+}
+
+type UpdateExamDTO struct {
 }

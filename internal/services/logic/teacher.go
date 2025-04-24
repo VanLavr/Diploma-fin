@@ -10,4 +10,8 @@ type TeacherUsecase interface {
 	SetDate(context.Context, string, string, int64) error
 	GetAllDebts(context.Context, string) ([]types.Debt, error)
 	GetTeacherByEmail(context.Context, string) ([]types.Teacher, error)
+	DeleteTeacher(context.Context, string) error
+	UpdateTeacher(context.Context, types.Teacher) error
+	CreateTeacher(context.Context, types.Teacher) (string, error)
+	GetTeachers(context.Context, int64, int64) ([]types.Teacher, error)
 }
