@@ -9,6 +9,8 @@ type GetDebtsFilters struct {
 	TeacherUUIDs []string
 	ExamIDs      []int64
 	DebtIDs      []int64
+	Limit        int64
+	Offset       int64
 }
 
 func (this *GetDebtsFilters) Validate() error {
@@ -32,7 +34,9 @@ func (this *GetDebtsFilters) Validate() error {
 }
 
 type GetExamsFilters struct {
-	IDs []int64
+	Limit  int64
+	Offset int64
+	IDs    []int64
 }
 
 func (this *GetExamsFilters) Validate() error {

@@ -21,3 +21,27 @@ func (this UpdateDebtByID) Validate() error {
 
 	return nil
 }
+
+type CreateExam struct {
+	Name string
+}
+
+type CreateDebt struct {
+	ExamID      int64
+	StudentUUID string
+	TeacherUUID string
+	Date        time.Time
+}
+
+type UpdateExamByID struct {
+	ID   int64
+	Name string
+}
+
+type DeleteExam struct {
+	ID int64
+}
+
+type DeleteDebt struct {
+	ID int64
+}

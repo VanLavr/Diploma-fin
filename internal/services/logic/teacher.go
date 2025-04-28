@@ -14,4 +14,5 @@ type TeacherUsecase interface {
 	UpdateTeacher(context.Context, types.Teacher) error
 	CreateTeacher(context.Context, types.Teacher) (string, error)
 	GetTeachers(context.Context, int64, int64) ([]types.Teacher, error)
+	GetTeacher(context.Context, string) (types.Teacher, error)
 }

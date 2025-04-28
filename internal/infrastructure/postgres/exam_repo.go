@@ -25,6 +25,128 @@ func NewExamRepo(conn *pgxpool.Pool) repositories.ExamRepository {
 	}
 }
 
+// CreateDebt implements repositories.ExamRepository.
+func (this *examRepo) CreateDebt(ctx context.Context, createDebt commands.CreateDebt) (int64, error) {
+	sql, args, err := sq.
+		Insert("debts").
+		SetMap(sq.Eq{
+			"exam_id":      createDebt.ExamID,
+			"student_uuid": createDebt.StudentUUID,
+			"teacher_uuid": createDebt.TeacherUUID,
+		}).
+		Suffix("RETURNING id").
+		ToSql()
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return 0, err
+	}
+
+	row := this.db.QueryRow(ctx, sql, args...)
+
+	var id int64
+	if err := row.Scan(&id); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return 0, err
+	}
+
+	return id, nil
+}
+
+// DeleteDebt implements repositories.ExamRepository.
+func (this *examRepo) DeleteDebt(ctx context.Context, debt commands.DeleteDebt) error {
+	sql, args, err := sq.Delete("debts").Where(sq.Eq{"id": debt.ID}).PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	if _, err = this.db.Exec(ctx, sql, args...); err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return nil
+}
+
+// GetExamByID implements repositories.ExamRepository.
+func (this *examRepo) GetExamByID(ctx context.Context, query query.GetExamsFilters) (*models.Exam, error) {
+	sql, args, err := sq.Select("id", "name").From("exams").Where(sq.Eq{"id": query.IDs}).PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	row := this.db.QueryRow(ctx, sql, args...)
+
+	result := new(models.Exam)
+	if err := row.Scan(&result.ID, &result.Name); err != nil {
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return result, nil
+}
+
+// DeleteExam implements repositories.ExamRepository.
+func (this *examRepo) DeleteExam(ctx context.Context, exam commands.DeleteExam) error {
+	sql, args, err := sq.Delete("exams").Where(sq.Eq{"id": exam.ID}).PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	if _, err = this.db.Exec(ctx, sql, args...); err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return nil
+}
+
+// UpdateExam implements repositories.ExamRepository.
+func (this *examRepo) UpdateExam(ctx context.Context, exam commands.UpdateExamByID) error {
+	query := sq.Update("exams").
+		Set("name", exam.Name).
+		Where(sq.Eq{"id": exam.ID}).
+		PlaceholderFormat(sq.Dollar)
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	if tx, ok := tools.GetTransaction(ctx); ok {
+		_, err = tx.Exec(ctx, sql, args...)
+	} else {
+		_, err = this.db.Exec(ctx, sql, args...)
+	}
+
+	if err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return nil
+}
+
+// CreateExam implements repositories.ExamRepository.
+func (this *examRepo) CreateExam(ctx context.Context, exam commands.CreateExam) (int64, error) {
+	sql, args, err := sq.
+		Insert("exams").
+		SetMap(sq.Eq{
+			"name": exam.Name,
+		}).
+		Suffix("RETURNING id").
+		ToSql()
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return 0, err
+	}
+
+	row := this.db.QueryRow(ctx, sql, args...)
+
+	var id int64
+	if err := row.Scan(&id); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return 0, err
+	}
+
+	return id, nil
+}
+
 func (this examRepo) GetExams(ctx context.Context, filters query.GetExamsFilters) ([]models.Exam, error) {
 	if err := filters.Validate(); err != nil {
 		return nil, err
@@ -72,10 +194,12 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 		"t.first_name",
 		"t.last_name",
 		"t.middle_name",
+		"t.email",
 		"s.uuid",
 		"s.first_name",
 		"s.last_name",
 		"s.middle_name",
+		"s.email",
 		"d.date",
 	)
 	query = query.From("debts d")
@@ -83,6 +207,12 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 	query = query.LeftJoin("teachers t ON d.teacher_uuid = t.uuid")
 	query = query.LeftJoin("exams e ON d.exam_id = e.id")
 
+	if filters.Limit != 0 {
+		query = query.Limit(uint64(filters.Limit))
+	}
+	if filters.Offset != 0 {
+		query = query.Offset(uint64(filters.Offset))
+	}
 	if len(filters.StudentUUIDs) > 0 {
 		query = query.Where(sq.Eq{"s.uuid": filters.StudentUUIDs})
 	}
@@ -124,10 +254,12 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 			&debt.Teacher.FirstName,
 			&debt.Teacher.LastName,
 			&debt.Teacher.MiddleName,
+			&debt.Teacher.Email,
 			&debt.Student.UUID,
 			&debt.Student.FirstName,
 			&debt.Student.LastName,
 			&debt.Student.MiddleName,
+			&debt.Student.Email,
 			&debt.Date,
 		); err != nil {
 			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

@@ -1,8 +1,16 @@
 package types
 
 import (
+	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	entities "github.com/VanLavr/Diploma-fin/internal/domain/models"
 )
+
+func ExamFromDomain(src *entities.Exam) Exam {
+	return Exam{
+		ID:   src.ID,
+		Name: src.Name,
+	}
+}
 
 func DebtFromDomain(src *entities.Debt) Debt {
 	var (
@@ -52,5 +60,45 @@ func StudentFromDomain(src *entities.Student) Student {
 		LastName:   src.LastName,
 		MiddleName: src.MiddleName,
 		Email:      src.Email,
+	}
+}
+
+func DomainFromStudent(src models.Student) Student {
+	var (
+		groupID   int64
+		groupName string
+	)
+
+	if src.Group != nil {
+		groupID = src.Group.ID
+		groupName = src.Group.Name
+	}
+
+	return Student{
+		UUID:       src.UUID,
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		Email:      src.Email,
+		Group: &Group{
+			ID:   groupID,
+			Name: groupName,
+		},
+	}
+}
+func DomainFromTeacher(src models.Teacher) Teacher {
+	return Teacher{
+		UUID:       src.UUID,
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		Email:      src.Email,
+	}
+}
+
+func DomainFromExam(src models.Exam) Exam {
+	return Exam{
+		ID:   src.ID,
+		Name: src.Name,
 	}
 }

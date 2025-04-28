@@ -32,6 +32,27 @@ func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
 	group.PUT("/teacher", this.UpdateTeacher)
 	group.DELETE("/teacher/:uuid", this.DeleteTeacher)
 	group.GET("/teacher/all/:limit/:offset", this.GetTeachers)
+	group.GET("/teacher/:uuid", this.GetTeacher)
+}
+
+func (t TeacherHandler) GetTeacher(c *gin.Context) {
+	uuid := c.Param("uuid")
+
+	teacher, err := t.teacherUsecase.GetTeacher(c.Request.Context(), uuid)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	result := dto.TeacherDTOFromTypes(teacher)
+
+	c.JSON(http.StatusOK, dto.GetTeacherDTO{
+		Err:  nil,
+		Data: result,
+	})
 }
 
 func (t TeacherHandler) CreateTeacher(c *gin.Context) {

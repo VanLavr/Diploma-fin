@@ -1,13 +1,38 @@
 package dto
 
+type GetStudentDTO struct {
+	Err  error   `json:"error"`
+	Data Student `json:"data"`
+}
+
 type GetAllStudentsDTO struct {
 	Err  error     `json:"error"`
 	Data []Student `json:"data"`
 }
 
+type GetTeacherDTO struct {
+	Err  error   `json:"error"`
+	Data Teacher `json:"data"`
+}
+
 type GetAllTeachersDTO struct {
 	Err  error     `json:"error"`
 	Data []Teacher `json:"data"`
+}
+
+type GetExamDTO struct {
+	Err  error `json:"error"`
+	Data Exam  `json:"data"`
+}
+
+type GetDebtDTO struct {
+	Err  error `json:"error"`
+	Data Debt  `json:"data"`
+}
+
+type GetAllExamsDTO struct {
+	Err  error  `json:"error"`
+	Data []Exam `json:"data"`
 }
 
 type GetAllDebtsDTO struct {
@@ -36,6 +61,7 @@ type Student struct {
 	LastName   string `json:"last_name"`
 	MiddleName string `json:"middle_name"`
 	GroupName  string `json:"group_name"`
+	Email      string `json:"email"`
 }
 
 type Teacher struct {
@@ -43,6 +69,7 @@ type Teacher struct {
 	FirstName  string `json:"first_name"`
 	LastName   string `json:"last_name"`
 	MiddleName string `json:"middle_name"`
+	Email      string `json:"email"`
 }
 
 type Debt struct {
@@ -55,11 +82,14 @@ type Debt struct {
 }
 
 type CreateExamDTO struct {
-	FirstName  string `json:"first_name"`
-	LastName   string `json:"last_name"`
-	MiddleName string `json:"middle_name"`
-	Group      Group  `json:"group"`
-	Email      string `json:"email"`
+	Name string `json:"name"`
+}
+
+type CreateDebtDTO struct {
+	ExamID      int64  `json:"id"`
+	TeacherUUID string `json:"teacher_uuid"`
+	StudentUUID string `json:"student_uuid"`
+	Date        string `json:"date"`
 }
 
 type CreateStudentDTO struct {
@@ -102,4 +132,13 @@ type UpdateTeacherDTO struct {
 }
 
 type UpdateExamDTO struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
+
+type UpdateDebtDTO struct {
+	ID          int64  `json:"id"`
+	Date        string `json:"date"`
+	TeacherUUID string `json:"teacher_uuid"`
+	StudentUUID string `json:"student_uuid"`
 }

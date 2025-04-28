@@ -30,6 +30,27 @@ func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
 	group.PUT("/student", this.UpdateStudent)
 	group.DELETE("/student/:uuid", this.DeleteStduent)
 	group.GET("/student/all/:limit/:offset", this.GetStudents)
+	group.GET("/student/:uuid", this.GetStudent)
+}
+
+func (s StudentHandler) GetStudent(c *gin.Context) {
+	uuid := c.Param("uuid")
+
+	student, err := s.studentUsecase.GetStudent(c.Request.Context(), uuid)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	result := dto.StudentDTOFromTypes(student)
+
+	c.JSON(http.StatusOK, dto.GetStudentDTO{
+		Err:  nil,
+		Data: result,
+	})
 }
 
 func (this StudentHandler) GetStudents(c *gin.Context) {
