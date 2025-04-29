@@ -62,6 +62,7 @@ type Student struct {
 	MiddleName string `json:"middle_name"`
 	GroupName  string `json:"group_name"`
 	Email      string `json:"email"`
+	GroupID    int64  `json:"group_id"`
 }
 
 type Teacher struct {
@@ -96,7 +97,7 @@ type CreateStudentDTO struct {
 	FirstName  string `json:"first_name"`
 	LastName   string `json:"last_name"`
 	MiddleName string `json:"middle_name"`
-	Group      Group  `json:"group"`
+	GroupID    int64  `json:"group_id"`
 	Email      string `json:"email"`
 }
 
@@ -118,7 +119,7 @@ type UpdateStudentDTO struct {
 	FirstName  string `json:"first_name"`
 	LastName   string `json:"last_name"`
 	MiddleName string `json:"middle_name"`
-	Group      Group  `json:"group"`
+	GroupID    int64  `json:"group_id"`
 	Email      string `json:"email"`
 }
 

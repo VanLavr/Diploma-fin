@@ -6,6 +6,8 @@ import (
 )
 
 type GetStudentsFilters struct {
+	Limit  int64
+	Offset int64
 	IDs    []string
 	Emails []string
 }

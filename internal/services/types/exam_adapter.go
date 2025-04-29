@@ -54,12 +54,22 @@ func TeacherFromDomain(src *entities.Teacher) Teacher {
 	}
 }
 func StudentFromDomain(src *entities.Student) Student {
+	groupName := ""
+	var groupID int64
+	if src.Group != nil {
+		groupName = src.Group.Name
+		groupID = src.Group.ID
+	}
 	return Student{
 		UUID:       src.UUID,
 		FirstName:  src.FirstName,
 		LastName:   src.LastName,
 		MiddleName: src.MiddleName,
 		Email:      src.Email,
+		Group: &Group{
+			ID:   groupID,
+			Name: groupName,
+		},
 	}
 }
 

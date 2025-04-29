@@ -53,7 +53,15 @@ func DebtDTOFromTypes(src types.Debt) Debt {
 }
 
 func TypesStudentFromCreateStudentDTO(src CreateStudentDTO) types.Student {
-	return types.Student{}
+	return types.Student{
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		Email:      src.Email,
+		Group: &types.Group{
+			ID: src.GroupID,
+		},
+	}
 }
 
 func TypesDebtFromCreateDebtDTO(src CreateDebtDTO) (*types.Debt, error) {
@@ -75,11 +83,36 @@ func TypesExamFromCreateExamDTO(src CreateExamDTO) types.Exam {
 }
 
 func TypeStudentFromUpdateStudentDTO(src UpdateStudentDTO) types.Student {
-	return types.Student{}
+	return types.Student{
+		UUID:       src.UUID,
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		Email:      src.Email,
+		Group: &types.Group{
+			ID: src.GroupID,
+		},
+	}
 }
 
 func StudentDTOFromTypes(src types.Student) Student {
-	return Student{}
+	var (
+		groupName string
+		groupID   int64
+	)
+	if src.Group != nil {
+		groupID = src.Group.ID
+		groupName = src.Group.Name
+	}
+	return Student{
+		UUID:       src.UUID,
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		GroupName:  groupName,
+		Email:      src.Email,
+		GroupID:    groupID,
+	}
 }
 
 func TeacherDTOFromTypes(src types.Teacher) Teacher {

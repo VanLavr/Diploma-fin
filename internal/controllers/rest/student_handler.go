@@ -24,13 +24,13 @@ func NewStudentHandler(studentUsecase logic.StudentUsecase) *StudentHandler {
 }
 
 func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("/student/all_debts/:UUID", this.getAllDebts)
-	group.POST("/notification/:UUID/:examID", this.sendNotification)
-	group.POST("/student", this.CreateStudent)
-	group.PUT("/student", this.UpdateStudent)
-	group.DELETE("/student/:uuid", this.DeleteStduent)
-	group.GET("/student/all/:limit/:offset", this.GetStudents)
-	group.GET("/student/:uuid", this.GetStudent)
+	group.GET("/student/all_debts/:UUID", this.getAllDebts)          // +
+	group.POST("/notification/:UUID/:examID", this.sendNotification) // +
+	group.POST("/student", this.CreateStudent)                       // +
+	group.PUT("/student", this.UpdateStudent)                        // +
+	group.DELETE("/student/:uuid", this.DeleteStduent)               // +
+	group.GET("/student/all/:limit/:offset", this.GetStudents)       // +
+	group.GET("/student/:uuid", this.GetStudent)                     // +
 }
 
 func (s StudentHandler) GetStudent(c *gin.Context) {
@@ -45,7 +45,7 @@ func (s StudentHandler) GetStudent(c *gin.Context) {
 		return
 	}
 
-	result := dto.StudentDTOFromTypes(student)
+	result := dto.StudentDTOFromTypes(*student)
 
 	c.JSON(http.StatusOK, dto.GetStudentDTO{
 		Err:  nil,

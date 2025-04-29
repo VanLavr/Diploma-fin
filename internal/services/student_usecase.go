@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/VanLavr/Diploma-fin/internal/domain/commands"
 	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
@@ -21,6 +22,86 @@ func NewStudentUsecase(repo repositories.Repository) logic.StudentUsecase {
 	return &studentUsecase{
 		repo: repo,
 	}
+}
+
+// CreateStudent implements logic.StudentUsecase.
+func (this *studentUsecase) CreateStudent(ctx context.Context, student types.Student) (string, error) {
+	uuid, err := this.repo.CreateStudent(ctx, commands.CreateStudent{
+		FirstName:  student.FirstName,
+		LastName:   student.LastName,
+		MiddleName: student.MiddleName,
+		GroupID:    student.Group.ID,
+		Email:      student.Email,
+	})
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return "", err
+	}
+
+	return uuid, nil
+}
+
+// DeleteStudent implements logic.StudentUsecase.
+func (this *studentUsecase) DeleteStudent(ctx context.Context, uuid string) error {
+	if err := this.repo.DeleteStudent(ctx, commands.DeleteStudent{UUID: uuid}); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return err
+	}
+
+	return nil
+}
+
+// GetStudent implements logic.StudentUsecase.
+func (this *studentUsecase) GetStudent(ctx context.Context, uuid string) (*types.Student, error) {
+	student, err := this.repo.GetStudentByUUID(ctx, uuid)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, err
+	}
+
+	result := types.StudentFromDomain(student)
+
+	return &result, nil
+}
+
+// GetStudents implements logic.StudentUsecase.
+func (this *studentUsecase) GetStudents(ctx context.Context, limit int64, offset int64) ([]types.Student, error) {
+	students, err := this.repo.GetStudents(ctx, query.GetStudentsFilters{
+		Limit:  limit,
+		Offset: offset,
+	})
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, err
+	}
+
+	result := make([]types.Student, len(students))
+	for i, student := range students {
+		result[i] = types.StudentFromDomain(&student)
+	}
+
+	if err != nil {
+		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return result, nil
+}
+
+// UpdateStudent implements logic.StudentUsecase.
+func (this *studentUsecase) UpdateStudent(ctx context.Context, student types.Student) error {
+	if err := this.repo.UpdateStudent(ctx, commands.UpdateStudent{
+		UUID:       student.UUID,
+		FirstName:  student.FirstName,
+		LastName:   student.LastName,
+		MiddleName: student.MiddleName,
+		GroupID:    student.Group.ID,
+		Email:      student.Email,
+	}); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return err
+	}
+
+	return nil
 }
 
 func (this studentUsecase) GetAllDebts(ctx context.Context, UUID string) ([]types.Debt, error) {
