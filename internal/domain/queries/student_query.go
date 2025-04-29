@@ -5,6 +5,12 @@ import (
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
+type GetGroupsFilters struct {
+	IDs    []int64
+	Limit  int64
+	Offset int64
+}
+
 type GetStudentsFilters struct {
 	Limit  int64
 	Offset int64

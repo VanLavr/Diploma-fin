@@ -15,6 +15,7 @@ type Repository interface {
 	StudentRepository
 	TeacherRepository
 	StudentMailer
+	GroupRepository
 }
 
 type TransactionRepository interface {

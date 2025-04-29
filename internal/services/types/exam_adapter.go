@@ -12,6 +12,13 @@ func ExamFromDomain(src *entities.Exam) Exam {
 	}
 }
 
+func GroupFromDomain(src *entities.Group) Group {
+	return Group{
+		ID:   src.ID,
+		Name: src.Name,
+	}
+}
+
 func DebtFromDomain(src *entities.Debt) Debt {
 	var (
 		ex      = Exam{}

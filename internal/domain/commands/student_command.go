@@ -20,3 +20,16 @@ type UpdateStudent struct {
 type DeleteStudent struct {
 	UUID string
 }
+
+type CreateGroup struct {
+	Name string
+}
+
+type UpdateGroup struct {
+	ID   int64
+	Name string
+}
+
+type DeleteGroup struct {
+	ID int64
+}

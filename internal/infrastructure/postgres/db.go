@@ -21,6 +21,7 @@ type repository struct {
 	repositories.StudentRepository
 	repositories.TeacherRepository
 	repositories.StudentMailer
+	repositories.GroupRepository
 }
 
 func NewRepository(
@@ -36,6 +37,7 @@ func NewRepository(
 		ExamRepository:        NewExamRepo(conn),
 		StudentRepository:     NewStudentRepo(conn),
 		TeacherRepository:     NewTeacherRepo(conn),
+		GroupRepository:       NewGroupRepo(conn),
 		StudentMailer:         mail.NewStudentMailer(cfg),
 	}
 }

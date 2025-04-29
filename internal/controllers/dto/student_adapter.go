@@ -14,6 +14,13 @@ func ExamDTOFromTypes(src types.Exam) Exam {
 	}
 }
 
+func GroupDTOFromTypes(src types.Group) Group {
+	return Group{
+		ID:   src.ID,
+		Name: src.Name,
+	}
+}
+
 func DebtDTOFromTypes(src types.Debt) Debt {
 	var (
 		ex      = Exam{}
@@ -82,6 +89,10 @@ func TypesExamFromCreateExamDTO(src CreateExamDTO) types.Exam {
 	return types.Exam{Name: src.Name}
 }
 
+func TypesGroupFromCreateGroupDTO(src CreateGroupDTO) types.Group {
+	return types.Group{Name: src.Name}
+}
+
 func TypeStudentFromUpdateStudentDTO(src UpdateStudentDTO) types.Student {
 	return types.Student{
 		UUID:       src.UUID,
@@ -129,6 +140,13 @@ func TypesTeacherFromUpdateTeachertDTO(src UpdateTeacherDTO) types.Teacher {
 
 func TypesExamFromUpdateExamDTO(src UpdateExamDTO) types.Exam {
 	return types.Exam{
+		ID:   src.ID,
+		Name: src.Name,
+	}
+}
+
+func TypesGroupFromUpdateGroupDTO(src UpdateGroupDTO) types.Group {
+	return types.Group{
 		ID:   src.ID,
 		Name: src.Name,
 	}

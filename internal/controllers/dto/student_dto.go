@@ -25,6 +25,11 @@ type GetExamDTO struct {
 	Data Exam  `json:"data"`
 }
 
+type GetGroupDTO struct {
+	Err  error `json:"error"`
+	Data Group `json:"data"`
+}
+
 type GetDebtDTO struct {
 	Err  error `json:"error"`
 	Data Debt  `json:"data"`
@@ -33,6 +38,11 @@ type GetDebtDTO struct {
 type GetAllExamsDTO struct {
 	Err  error  `json:"error"`
 	Data []Exam `json:"data"`
+}
+
+type GetAllGroupsDTO struct {
+	Err  error   `json:"error"`
+	Data []Group `json:"data"`
 }
 
 type GetAllDebtsDTO struct {
