@@ -115,7 +115,6 @@ type CreateTeacherDTO struct {
 	FirstName  string `json:"first_name"`
 	LastName   string `json:"last_name"`
 	MiddleName string `json:"middle_name"`
-	Group      Group  `json:"group"`
 	Email      string `json:"email"`
 }
 
@@ -138,7 +137,6 @@ type UpdateTeacherDTO struct {
 	FirstName  string `json:"first_name"`
 	LastName   string `json:"last_name"`
 	MiddleName string `json:"middle_name"`
-	Group      Group  `json:"group"`
 	Email      string `json:"email"`
 }
 

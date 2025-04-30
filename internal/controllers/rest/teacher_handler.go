@@ -26,13 +26,13 @@ func NewTeacherHandler(teacherUsecase logic.TeacherUsecase, studentUsecase logic
 }
 
 func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("/teacher/all_debts/:UUID", this.getAllDebts)
-	group.POST("/set_date", this.setDate)
-	group.POST("/teacher", this.CreateTeacher)
-	group.PUT("/teacher", this.UpdateTeacher)
-	group.DELETE("/teacher/:uuid", this.DeleteTeacher)
-	group.GET("/teacher/all/:limit/:offset", this.GetTeachers)
-	group.GET("/teacher/:uuid", this.GetTeacher)
+	group.GET("/teacher/all_debts/:UUID", this.getAllDebts)    // +
+	group.POST("/set_date", this.setDate)                      // +
+	group.POST("/teacher", this.CreateTeacher)                 // +
+	group.PUT("/teacher", this.UpdateTeacher)                  // +
+	group.DELETE("/teacher/:uuid", this.DeleteTeacher)         // +
+	group.GET("/teacher/all/:limit/:offset", this.GetTeachers) // +
+	group.GET("/teacher/:uuid", this.GetTeacher)               // +
 }
 
 func (t TeacherHandler) GetTeacher(c *gin.Context) {

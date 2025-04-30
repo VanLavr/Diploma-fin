@@ -8,6 +8,8 @@ import (
 type GetTeachersFilters struct {
 	UUIDs  []string
 	Emails []string
+	Limit  int64
+	Offset int64
 }
 
 func (this GetTeachersFilters) Validate() error {

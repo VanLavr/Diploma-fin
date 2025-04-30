@@ -131,11 +131,22 @@ func TeacherDTOFromTypes(src types.Teacher) Teacher {
 }
 
 func TypesTeacherFromCreateTeacherDTO(src CreateTeacherDTO) types.Teacher {
-	return types.Teacher{}
+	return types.Teacher{
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		Email:      src.Email,
+	}
 }
 
 func TypesTeacherFromUpdateTeachertDTO(src UpdateTeacherDTO) types.Teacher {
-	return types.Teacher{}
+	return types.Teacher{
+		UUID:       src.UUID,
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		Email:      src.Email,
+	}
 }
 
 func TypesExamFromUpdateExamDTO(src UpdateExamDTO) types.Exam {
