@@ -77,12 +77,21 @@ func (g *groupRepo) GetGroupByID(ctx context.Context, id int64) (*models.Group, 
 
 // GetGroups implements repositories.GroupRepository.
 func (g *groupRepo) GetGroups(ctx context.Context, filters query.GetGroupsFilters) ([]models.Group, error) {
-	sql, args, err := sq.
-		Select("id", "name").
-		From("groups").
-		Where(sq.Eq{"id": filters.IDs}).
-		PlaceholderFormat(sq.Dollar).
-		ToSql()
+	query := sq.Select("id", "name")
+	query = query.From("groups")
+	query = query.PlaceholderFormat(sq.Dollar)
+
+	if len(filters.IDs) != 0 {
+		query = query.Where(sq.Eq{"id": filters.IDs})
+	}
+	if filters.Offset != 0 {
+		query = query.Offset(uint64(filters.Offset))
+	}
+	if filters.Limit != 0 {
+		query = query.Limit(uint64(filters.Limit))
+	}
+
+	sql, args, err := query.ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -94,12 +103,12 @@ func (g *groupRepo) GetGroups(ctx context.Context, filters query.GetGroupsFilter
 
 	var result []models.Group
 	for rows.Next() {
-		var group models.Group
-		if err := rows.Scan(&group.ID, &group.Name); err != nil {
+		var exam models.Group
+		if err := rows.Scan(&exam.ID, &exam.Name); err != nil {
 			return nil, err
 		}
 
-		result = append(result, group)
+		result = append(result, exam)
 	}
 
 	return result, nil

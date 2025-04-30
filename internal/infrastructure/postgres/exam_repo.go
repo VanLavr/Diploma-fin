@@ -151,13 +151,21 @@ func (this examRepo) GetExams(ctx context.Context, filters query.GetExamsFilters
 	if err := filters.Validate(); err != nil {
 		return nil, err
 	}
+	query := sq.Select("id", "name")
+	query = query.From("exams")
+	query = query.PlaceholderFormat(sq.Dollar)
 
-	sql, args, err := sq.
-		Select("id", "name").
-		From("exams").
-		Where(sq.Eq{"id": filters.IDs}).
-		PlaceholderFormat(sq.Dollar).
-		ToSql()
+	if len(filters.IDs) != 0 {
+		query = query.Where(sq.Eq{"id": filters.IDs})
+	}
+	if filters.Offset != 0 {
+		query = query.Offset(uint64(filters.Offset))
+	}
+	if filters.Limit != 0 {
+		query = query.Limit(uint64(filters.Limit))
+	}
+
+	sql, args, err := query.ToSql()
 	if err != nil {
 		return nil, err
 	}
