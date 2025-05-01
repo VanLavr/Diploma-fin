@@ -18,8 +18,16 @@ type examUsecase struct {
 }
 
 // CreateExam implements logic.ExamUsecase.
-func (e *examUsecase) CreateExam(context.Context, types.Exam) (int64, error) {
-	panic("unimplemented")
+func (e *examUsecase) CreateExam(ctx context.Context, exam types.Exam) (int64, error) {
+	id, err := e.repo.CreateExam(ctx, commands.CreateExam{
+		Name: exam.Name,
+	})
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return 0, err
+	}
+
+	return id, nil
 }
 
 func NewExamUsecase(repo repositories.Repository) logic.ExamUsecase {
