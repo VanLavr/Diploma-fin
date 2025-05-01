@@ -23,3 +23,6 @@ build:
 
 enterp:
 	@docker exec -it diploma-fin-postgres-1 bash -c "PGPASSWORD=qwerty psql -U ewan -p 5005 -d debts"
+
+stop:
+	@docker compose down
