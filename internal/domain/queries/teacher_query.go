@@ -13,7 +13,7 @@ type GetTeachersFilters struct {
 }
 
 func (this GetTeachersFilters) Validate() error {
-	if len(this.Emails) == 0 && len(this.UUIDs) == 0 {
+	if len(this.Emails) == 0 && len(this.UUIDs) == 0 && this.Limit == 0 {
 		return log.ErrorWrapper(errors.ErrInvalidFilters, errors.ERR_DOMAIN, "")
 	}
 	for _, email := range this.Emails {
