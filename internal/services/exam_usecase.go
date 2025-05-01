@@ -51,24 +51,24 @@ func (e *examUsecase) GetDebts(ctx context.Context, limit int64, offset int64) (
 	for _, debt := range debts {
 		result = append(result, types.Debt{
 			ID:   debt.ID,
-			Date: debts[0].Date,
+			Date: debt.Date,
 			Exam: &types.Exam{
-				ID:   debts[0].Exam.ID,
-				Name: debts[0].Exam.Name,
+				ID:   debt.Exam.ID,
+				Name: debt.Exam.Name,
 			},
 			Student: &types.Student{
-				UUID:       debts[0].Student.UUID,
-				FirstName:  debts[0].Student.FirstName,
-				LastName:   debts[0].Student.LastName,
-				MiddleName: debts[0].Student.LastName,
-				Email:      debts[0].Student.Email,
+				UUID:       debt.Student.UUID,
+				FirstName:  debt.Student.FirstName,
+				LastName:   debt.Student.LastName,
+				MiddleName: debt.Student.LastName,
+				Email:      debt.Student.Email,
 			},
 			Teacher: &types.Teacher{
-				UUID:       debts[0].Teacher.UUID,
-				FirstName:  debts[0].Teacher.FirstName,
-				LastName:   debts[0].Teacher.LastName,
-				MiddleName: debts[0].Teacher.MiddleName,
-				Email:      debts[0].Teacher.Email,
+				UUID:       debt.Teacher.UUID,
+				FirstName:  debt.Teacher.FirstName,
+				LastName:   debt.Teacher.LastName,
+				MiddleName: debt.Teacher.MiddleName,
+				Email:      debt.Teacher.Email,
 			},
 		})
 	}
