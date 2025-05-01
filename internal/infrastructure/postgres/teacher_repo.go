@@ -30,13 +30,14 @@ func (this *teacherRepo) CreateTeacher(ctx context.Context, teacher commands.Cre
 	sql, args, err := sq.
 		Insert("teachers").
 		SetMap(sq.Eq{
-			"uuid":        "uuid_generate_v4()",
+			"uuid":        sq.Expr("uuid_generate_v4()"),
 			"first_name":  teacher.FirstName,
 			"last_name":   teacher.LastName,
 			"middle_name": teacher.MiddleName,
 			"email":       teacher.Email,
 		}).
 		Suffix("RETURNING uuid").
+		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

@@ -20,14 +20,25 @@ type Server struct {
 	cfg            *config.Config
 	studentHandler *StudentHandler
 	teacherHandler *TeacherHandler
+	examHandler    *ExamHandler
+	groupHandler   *GroupHandler
 	authHandler    *AuthHandler
 }
 
-func NewServer(cfg *config.Config, studentHandler *StudentHandler, teacherHandler *TeacherHandler, authHandler *AuthHandler) *Server {
+func NewServer(
+	cfg *config.Config,
+	studentHandler *StudentHandler,
+	teacherHandler *TeacherHandler,
+	authHandler *AuthHandler,
+	examHandler *ExamHandler,
+	groupHandler *GroupHandler,
+) *Server {
 	return &Server{
 		cfg:            cfg,
 		studentHandler: studentHandler,
 		teacherHandler: teacherHandler,
+		examHandler:    examHandler,
+		groupHandler:   groupHandler,
 		authHandler:    authHandler,
 		gin:            gin.Default(),
 	}
@@ -104,5 +115,7 @@ func (s *Server) setV1Routes(group *gin.RouterGroup) {
 
 	s.authHandler.RegisterRoutes(v1Auth)
 	s.studentHandler.RegisterRoutes(v1)
+	s.examHandler.RegisterRoutes((v1))
+	s.groupHandler.RegisterRoutes((v1))
 	s.teacherHandler.RegisterRoutes(v1)
 }

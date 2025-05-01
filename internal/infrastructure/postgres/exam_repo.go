@@ -35,6 +35,7 @@ func (this *examRepo) CreateDebt(ctx context.Context, createDebt commands.Create
 			"teacher_uuid": createDebt.TeacherUUID,
 		}).
 		Suffix("RETURNING id").
+		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -130,6 +131,7 @@ func (this *examRepo) CreateExam(ctx context.Context, exam commands.CreateExam) 
 			"name": exam.Name,
 		}).
 		Suffix("RETURNING id").
+		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

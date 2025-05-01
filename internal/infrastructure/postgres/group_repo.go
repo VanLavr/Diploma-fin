@@ -27,6 +27,7 @@ func (g *groupRepo) CreateGroup(ctx context.Context, group commands.CreateGroup)
 			"name": group.Name,
 		}).
 		Suffix("RETURNING id").
+		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

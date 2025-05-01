@@ -19,7 +19,7 @@ type GetStudentsFilters struct {
 }
 
 func (this GetStudentsFilters) Validate() error {
-	if len(this.Emails) == 0 && len(this.IDs) == 0 {
+	if len(this.Emails) == 0 && len(this.IDs) == 0 && this.Limit == 0 {
 		return log.ErrorWrapper(errors.ErrInvalidFilters, errors.ERR_DOMAIN, "")
 	}
 	for _, email := range this.Emails {

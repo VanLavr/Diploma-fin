@@ -69,7 +69,7 @@ func (this *studentRepo) GetStudentByUUID(ctx context.Context, uuid string) (*mo
 
 // DeleteStudent implements repositories.StudentRepository.
 func (this *studentRepo) DeleteStudent(ctx context.Context, student commands.DeleteStudent) error {
-	sql, args, err := sq.Delete("student").Where(sq.Eq{"uuid": student.UUID}).PlaceholderFormat(sq.Dollar).ToSql()
+	sql, args, err := sq.Delete("students").Where(sq.Eq{"uuid": student.UUID}).PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
@@ -89,7 +89,7 @@ func (this *studentRepo) UpdateStudent(ctx context.Context, student commands.Upd
 		Set("middle_name", student.MiddleName).
 		Set("email", student.Email).
 		Set("group_id", student.GroupID).
-		Where(sq.Eq{"id": student.UUID}).
+		Where(sq.Eq{"uuid": student.UUID}).
 		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()

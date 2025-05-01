@@ -31,12 +31,16 @@ func main() {
 
 	studentApp := application.NewStudentUsecase(repository)
 	teacherApp := application.NewTeacherUsecase(repository)
+	examApp := application.NewExamUsecase(repository)
+	groupApp := application.NewGroupUsecase(repository)
 
 	server := rest.NewServer(
 		cfg,
 		rest.NewStudentHandler(studentApp),
 		rest.NewTeacherHandler(teacherApp, studentApp),
 		rest.NewAuthHandler(teacherApp, studentApp, auth.NewAuthMiddleware(cfg)),
+		rest.NewExamHandler(examApp),
+		rest.NewGroupHandler(groupApp),
 	)
 
 	errors.FatalOnError(server.Start(context.Background()))
