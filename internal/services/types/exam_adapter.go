@@ -23,7 +23,9 @@ func DebtFromDomain(src *entities.Debt) Debt {
 	var (
 		ex      = Exam{}
 		teacher = Teacher{}
-		student = Student{}
+		student = Student{
+			Group: &Group{},
+		}
 	)
 	if src.Exam != nil {
 		ex.ID = src.Exam.ID
@@ -34,12 +36,18 @@ func DebtFromDomain(src *entities.Debt) Debt {
 		teacher.FirstName = src.Teacher.FirstName
 		teacher.LastName = src.Teacher.LastName
 		teacher.MiddleName = src.Teacher.MiddleName
+		teacher.Email = src.Teacher.Email
 	}
 	if src.Student != nil {
 		student.UUID = src.Student.UUID
 		student.FirstName = src.Student.FirstName
 		student.LastName = src.Student.LastName
 		student.MiddleName = src.Student.MiddleName
+		student.Email = src.Student.Email
+		if src.Student.Group != nil {
+			student.Group.ID = src.Student.Group.ID
+			student.Group.Name = src.Student.Group.Name
+		}
 	}
 
 	return Debt{

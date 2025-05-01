@@ -44,6 +44,10 @@ func DebtDTOFromTypes(src types.Debt) Debt {
 		student.LastName = src.Student.LastName
 		student.MiddleName = src.Student.MiddleName
 		student.Email = src.Student.Email
+		if src.Student.Group != nil {
+			student.GroupID = src.Student.Group.ID
+			student.GroupName = src.Student.Group.Name
+		}
 	}
 
 	var date string

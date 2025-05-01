@@ -207,11 +207,14 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 		"s.first_name",
 		"s.last_name",
 		"s.middle_name",
+		"g.id",
+		"g.name",
 		"s.email",
 		"d.date",
 	)
 	query = query.From("debts d")
 	query = query.LeftJoin("students s ON d.student_uuid = s.uuid")
+	query = query.LeftJoin("groups g ON s.group_id = g.id")
 	query = query.LeftJoin("teachers t ON d.teacher_uuid = t.uuid")
 	query = query.LeftJoin("exams e ON d.exam_id = e.id")
 
@@ -250,8 +253,10 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 	var result []models.Debt
 	for rows.Next() {
 		debt := models.Debt{
-			Exam:    &models.Exam{},
-			Student: &models.Student{},
+			Exam: &models.Exam{},
+			Student: &models.Student{
+				Group: &models.Group{},
+			},
 			Teacher: &models.Teacher{},
 		}
 		if err := rows.Scan(
@@ -267,6 +272,8 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 			&debt.Student.FirstName,
 			&debt.Student.LastName,
 			&debt.Student.MiddleName,
+			&debt.Student.Group.ID,
+			&debt.Student.Group.Name,
 			&debt.Student.Email,
 			&debt.Date,
 		); err != nil {

@@ -115,7 +115,7 @@ func (this *studentRepo) CreateStudent(ctx context.Context, student commands.Cre
 	sql, args, err := sq.
 		Insert("students").
 		SetMap(sq.Eq{
-			"uuid":        "uuid_generate_v4()",
+			"uuid":        sq.Expr("uuid_generate_v4()"),
 			"first_name":  student.FirstName,
 			"last_name":   student.LastName,
 			"middle_name": student.MiddleName,
@@ -123,11 +123,13 @@ func (this *studentRepo) CreateStudent(ctx context.Context, student commands.Cre
 			"group_id":    student.GroupID,
 		}).
 		Suffix("RETURNING uuid").
+		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return "", err
 	}
+	fmt.Println("DEBUG", sql, args)
 
 	row := this.db.QueryRow(ctx, sql, args...)
 
