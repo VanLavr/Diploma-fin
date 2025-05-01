@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"strings"
 	"time"
 
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
@@ -77,16 +78,25 @@ func TypesStudentFromCreateStudentDTO(src CreateStudentDTO) types.Student {
 
 func TypesDebtFromCreateDebtDTO(src CreateDebtDTO) (*types.Debt, error) {
 	examDate, err := time.Parse(valueobjects.DateLayout, src.Date)
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "cannot parse \"\"") {
 		return nil, err
 	}
 
-	return &types.Debt{
-		Date:    &examDate,
-		Exam:    &types.Exam{ID: src.ExamID},
-		Student: &types.Student{UUID: src.StudentUUID},
-		Teacher: &types.Teacher{UUID: src.TeacherUUID},
-	}, nil
+	if !strings.Contains(err.Error(), "cannot parse \"\"") {
+		return &types.Debt{
+			Date:    &examDate,
+			Exam:    &types.Exam{ID: src.ExamID},
+			Student: &types.Student{UUID: src.StudentUUID},
+			Teacher: &types.Teacher{UUID: src.TeacherUUID},
+		}, nil
+	} else {
+		return &types.Debt{
+			Date:    nil,
+			Exam:    &types.Exam{ID: src.ExamID},
+			Student: &types.Student{UUID: src.StudentUUID},
+			Teacher: &types.Teacher{UUID: src.TeacherUUID},
+		}, nil
+	}
 }
 
 func TypesExamFromCreateExamDTO(src CreateExamDTO) types.Exam {
@@ -131,7 +141,13 @@ func StudentDTOFromTypes(src types.Student) Student {
 }
 
 func TeacherDTOFromTypes(src types.Teacher) Teacher {
-	return Teacher{}
+	return Teacher{
+		UUID:       src.UUID,
+		FirstName:  src.FirstName,
+		LastName:   src.LastName,
+		MiddleName: src.MiddleName,
+		Email:      src.Email,
+	}
 }
 
 func TypesTeacherFromCreateTeacherDTO(src CreateTeacherDTO) types.Teacher {
@@ -169,7 +185,7 @@ func TypesGroupFromUpdateGroupDTO(src UpdateGroupDTO) types.Group {
 
 func TypesDebtFromUpdateDebtDTO(src UpdateDebtDTO) (*types.Debt, error) {
 	examDate, err := time.Parse(valueobjects.DateLayout, src.Date)
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "cannot parse \"\"") {
 		return nil, err
 	}
 

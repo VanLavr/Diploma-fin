@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/VanLavr/Diploma-fin/internal/domain/commands"
@@ -57,6 +58,7 @@ func (t *teacherUsecase) GetTeacher(ctx context.Context, uuid string) (types.Tea
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return types.Teacher{}, err
 	}
+	fmt.Println("DEBUG:", teacher)
 
 	result := types.TeacherFromDomain(teacher)
 

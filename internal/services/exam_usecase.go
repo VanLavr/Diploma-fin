@@ -49,6 +49,11 @@ func (e *examUsecase) GetDebts(ctx context.Context, limit int64, offset int64) (
 	result := make([]types.Debt, 0, len(debts))
 
 	for _, debt := range debts {
+		var group types.Group
+		if debt.Student.Group != nil {
+			group.ID = debt.Student.Group.ID
+			group.Name = debt.Student.Group.Name
+		}
 		result = append(result, types.Debt{
 			ID:   debt.ID,
 			Date: debt.Date,
@@ -62,6 +67,7 @@ func (e *examUsecase) GetDebts(ctx context.Context, limit int64, offset int64) (
 				LastName:   debt.Student.LastName,
 				MiddleName: debt.Student.LastName,
 				Email:      debt.Student.Email,
+				Group:      &group,
 			},
 			Teacher: &types.Teacher{
 				UUID:       debt.Teacher.UUID,
@@ -184,7 +190,7 @@ func (e *examUsecase) CreateDebt(ctx context.Context, debt types.Debt) (int64, e
 	}
 
 	id, err := e.repo.CreateDebt(ctx, commands.CreateDebt{
-		ExamID:      debt.ID,
+		ExamID:      debt.Exam.ID,
 		StudentUUID: debt.Student.UUID,
 		TeacherUUID: debt.Teacher.UUID,
 		Date:        *debt.Date,
@@ -206,6 +212,12 @@ func (e *examUsecase) GetDebt(ctx context.Context, id int64) (*types.Debt, error
 		return nil, errors.ErroNoItemsFound
 	}
 
+	var group types.Group
+	if debts[0].Student.Group != nil {
+		group.ID = debts[0].Student.Group.ID
+		group.Name = debts[0].Student.Group.Name
+	}
+
 	return &types.Debt{
 		ID:   id,
 		Date: debts[0].Date,
@@ -219,6 +231,7 @@ func (e *examUsecase) GetDebt(ctx context.Context, id int64) (*types.Debt, error
 			LastName:   debts[0].Student.LastName,
 			MiddleName: debts[0].Student.LastName,
 			Email:      debts[0].Student.Email,
+			Group:      &group,
 		},
 		Teacher: &types.Teacher{
 			UUID:       debts[0].Teacher.UUID,

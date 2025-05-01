@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -27,6 +28,7 @@ func NewExamRepo(conn *pgxpool.Pool) repositories.ExamRepository {
 
 // CreateDebt implements repositories.ExamRepository.
 func (this *examRepo) CreateDebt(ctx context.Context, createDebt commands.CreateDebt) (int64, error) {
+	fmt.Println("DEBUG:", createDebt)
 	sql, args, err := sq.
 		Insert("debts").
 		SetMap(sq.Eq{

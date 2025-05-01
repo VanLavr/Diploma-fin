@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -324,6 +325,7 @@ func (this ExamHandler) CreateDebt(c *gin.Context) {
 		})
 		return
 	}
+	fmt.Println("DEBUG:", debt, debt.Exam.ID)
 
 	id, err := this.examUsecase.CreateDebt(c.Request.Context(), *debt)
 	if err != nil {

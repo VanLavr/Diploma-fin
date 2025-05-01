@@ -111,7 +111,7 @@ func (this *teacherRepo) UpdateTeacher(ctx context.Context, teacher commands.Upd
 		Set("last_name", teacher.LastName).
 		Set("middle_name", teacher.MiddleName).
 		Set("email", teacher.Email).
-		Where(sq.Eq{"id": teacher.UUID}).
+		Where(sq.Eq{"uuid": teacher.UUID}).
 		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
