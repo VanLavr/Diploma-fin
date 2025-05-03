@@ -28,6 +28,13 @@ func NewAuthHandler(teacherUsecase logic.TeacherUsecase, studentUsecase logic.St
 func (a AuthHandler) RegisterRoutes(group *gin.RouterGroup) {
 	group.POST("/teacher/login", a.TeacherLogin)
 	group.POST("/student/login", a.StudentLogin)
+
+	permissions := group.Group("/perm/check", a.auth.ValidateAccessToken())
+	permissions.GET("/current_permissions", a.GetCurrentPermissions)
+}
+
+func (a AuthHandler) GetCurrentPermissions(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{auth.RoleKey: c.Value(auth.RoleKey)})
 }
 
 func (a AuthHandler) TeacherLogin(c *gin.Context) {

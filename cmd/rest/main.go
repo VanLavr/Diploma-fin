@@ -39,7 +39,7 @@ func main() {
 		cfg,
 		rest.NewStudentHandler(studentApp),
 		rest.NewTeacherHandler(teacherApp, studentApp),
-		rest.NewAuthHandler(teacherApp, studentApp, auth.NewAuthMiddleware(cfg)),
+		rest.NewAuthHandler(teacherApp, studentApp, auth.NewAuthMiddleware(cfg, repository)),
 		rest.NewExamHandler(examApp),
 		rest.NewGroupHandler(groupApp),
 		rest.NewFileHandler(fileApp),

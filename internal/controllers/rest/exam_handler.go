@@ -9,6 +9,7 @@ import (
 
 	"github.com/VanLavr/Diploma-fin/internal/controllers/dto"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
+	"github.com/VanLavr/Diploma-fin/utils/auth"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
@@ -135,6 +136,7 @@ func (this ExamHandler) GetDebts(c *gin.Context) {
 }
 
 func (this ExamHandler) GetExams(c *gin.Context) {
+	fmt.Println(c.Value(auth.RoleKey))
 	lim := c.Param("limit")
 	limit, err := strconv.Atoi(lim)
 	if err != nil {

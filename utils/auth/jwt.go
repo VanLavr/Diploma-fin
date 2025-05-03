@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"net/http"
 	"strings"
 	"time"
@@ -8,15 +9,25 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 
+	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
+	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	"github.com/VanLavr/Diploma-fin/utils/config"
+)
+
+const (
+	RoleKey     = "role"
+	StudentRole = "student"
+	TeacherRole = "teacher"
+	AdminRole   = "admin"
 )
 
 type AuthMiddleware struct {
 	secret string
+	repo   repositories.Repository
 }
 
-func NewAuthMiddleware(config *config.Config) *AuthMiddleware {
-	return &AuthMiddleware{secret: config.Secret}
+func NewAuthMiddleware(config *config.Config, repo repositories.Repository) *AuthMiddleware {
+	return &AuthMiddleware{secret: config.Secret, repo: repo}
 }
 
 // CustomClaims contains custom JWT claims along with standard registered claims
@@ -99,11 +110,32 @@ func (a *AuthMiddleware) ValidateAccessToken() gin.HandlerFunc {
 			return
 		}
 
-		// You can add additional UUID validation logic here
-		// For example: check against database or route parameters
+		// get role
+		teachers, err := a.repo.SearchTeachers(context.TODO(), query.SearchTeacherFilters{
+			UUIDs: []string{claims.UserUUID},
+		})
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request: cannot determine role"})
+			return
+		}
+		students, err := a.repo.SearchStudents(context.TODO(), query.SearchStudentFilters{
+			UUIDs: []string{claims.UserUUID},
+		})
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request: cannot determine role"})
+			return
+		}
+
+		role := ""
+		if len(teachers) != 0 {
+			role = "teacher"
+		}
+		if len(students) != 0 {
+			role = "student"
+		}
 
 		// Set user UUID in context for subsequent handlers
-		c.Set("user_uuid", claims.UserUUID)
+		c.Set(RoleKey, role)
 		c.Next()
 	}
 }
