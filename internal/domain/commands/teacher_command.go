@@ -5,6 +5,7 @@ type CreateTeacher struct {
 	LastName   string
 	MiddleName string
 	Email      string
+	Password   string
 }
 
 type UpdateTeacher struct {

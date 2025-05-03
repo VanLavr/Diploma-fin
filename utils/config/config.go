@@ -18,6 +18,7 @@ type Config struct {
 	DbString          string `env:"DBSTRING"`
 	SMTP2OAuthCode    string `env:"SMTP2OAUTHCODE"`
 	Secret            string `env:"SECRET"`
+	AdminPass         string `env:"ADMINPASS"`
 }
 
 func ReadConfig() (*Config, error) {
@@ -36,6 +37,7 @@ func ReadConfig() (*Config, error) {
 		DbString:          v.GetString("DBSTRING"),
 		SMTP2OAuthCode:    v.GetString("SMTP2OAUTHCODE"),
 		Secret:            v.GetString("SECRET"),
+		AdminPass:         v.GetString("ADMINPASS"),
 	}
 	fmt.Println(config)
 

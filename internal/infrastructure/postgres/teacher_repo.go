@@ -105,6 +105,7 @@ func (this *teacherRepo) CreateTeacher(ctx context.Context, teacher commands.Cre
 			"last_name":   teacher.LastName,
 			"middle_name": teacher.MiddleName,
 			"email":       teacher.Email,
+			"password":    teacher.Password,
 		}).
 		Suffix("RETURNING uuid").
 		PlaceholderFormat(sq.Dollar).

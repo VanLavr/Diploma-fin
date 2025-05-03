@@ -109,6 +109,7 @@ type CreateStudentDTO struct {
 	MiddleName string `json:"middle_name"`
 	GroupID    int64  `json:"group_id"`
 	Email      string `json:"email"`
+	Password   string `json:"password"`
 }
 
 type CreateTeacherDTO struct {
@@ -116,6 +117,7 @@ type CreateTeacherDTO struct {
 	LastName   string `json:"last_name"`
 	MiddleName string `json:"middle_name"`
 	Email      string `json:"email"`
+	Password   string `json:"password"`
 }
 
 type Group struct {

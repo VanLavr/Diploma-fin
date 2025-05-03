@@ -6,6 +6,7 @@ type CreateStudent struct {
 	MiddleName string
 	GroupID    int64
 	Email      string
+	Password   string
 }
 
 type UpdateStudent struct {

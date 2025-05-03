@@ -14,5 +14,6 @@ const (
 var ErrInvalidFilters = errors.New("search filters are invalid")
 var ErrInvalidCommand = errors.New("insert, delete or update command is invalid")
 var ErroNoItemsFound = errors.New("no items found")
+var ErroInvalidPassword = errors.New("wrong password")
 
 const MethodKey string = "in method"

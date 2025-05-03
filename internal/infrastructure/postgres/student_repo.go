@@ -195,6 +195,7 @@ func (this *studentRepo) CreateStudent(ctx context.Context, student commands.Cre
 			"middle_name": student.MiddleName,
 			"email":       student.Email,
 			"group_id":    student.GroupID,
+			"password":    student.Password,
 		}).
 		Suffix("RETURNING uuid").
 		PlaceholderFormat(sq.Dollar).

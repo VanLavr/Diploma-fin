@@ -11,6 +11,7 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
 	"github.com/VanLavr/Diploma-fin/internal/services/types"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/hasher"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
@@ -32,6 +33,7 @@ func (this *studentUsecase) CreateStudent(ctx context.Context, student types.Stu
 		MiddleName: student.MiddleName,
 		GroupID:    student.Group.ID,
 		Email:      student.Email,
+		Password:   hasher.Hshr.Hash(student.Password),
 	})
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

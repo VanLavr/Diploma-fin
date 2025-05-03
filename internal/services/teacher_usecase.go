@@ -12,6 +12,7 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
 	"github.com/VanLavr/Diploma-fin/internal/services/types"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/hasher"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
@@ -32,6 +33,7 @@ func (t *teacherUsecase) CreateTeacher(ctx context.Context, teacher types.Teache
 		LastName:   teacher.LastName,
 		MiddleName: teacher.MiddleName,
 		Email:      teacher.Email,
+		Password:   hasher.Hshr.Hash(teacher.Password),
 	})
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

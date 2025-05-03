@@ -128,10 +128,13 @@ func (a *AuthMiddleware) ValidateAccessToken() gin.HandlerFunc {
 
 		role := ""
 		if len(teachers) != 0 {
-			role = "teacher"
+			role = TeacherRole
+			if teachers[0].Email == AdminRole {
+				role = AdminRole
+			}
 		}
 		if len(students) != 0 {
-			role = "student"
+			role = StudentRole
 		}
 
 		// Set user UUID in context for subsequent handlers

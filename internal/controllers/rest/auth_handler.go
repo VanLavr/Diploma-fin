@@ -9,6 +9,8 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/controllers/dto"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
 	"github.com/VanLavr/Diploma-fin/utils/auth"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/hasher"
 )
 
 type AuthHandler struct {
@@ -45,7 +47,6 @@ func (a AuthHandler) TeacherLogin(c *gin.Context) {
 		})
 		return
 	}
-	fmt.Println(request)
 
 	teachers, err := a.teacherUsecase.GetTeacherByEmail(c.Request.Context(), request.Email)
 	if err != nil {
@@ -58,6 +59,13 @@ func (a AuthHandler) TeacherLogin(c *gin.Context) {
 	if len(teachers) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err,
+		})
+		return
+	}
+
+	if !hasher.Hshr.Validate(request.Password, teachers[0].Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": errors.ErroInvalidPassword,
 		})
 		return
 	}
@@ -97,6 +105,13 @@ func (a AuthHandler) StudentLogin(c *gin.Context) {
 	if len(students) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err,
+		})
+		return
+	}
+
+	if !hasher.Hshr.Validate(request.Password, students[0].Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": errors.ErroInvalidPassword,
 		})
 		return
 	}

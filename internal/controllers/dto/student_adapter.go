@@ -70,6 +70,7 @@ func TypesStudentFromCreateStudentDTO(src CreateStudentDTO) types.Student {
 		LastName:   src.LastName,
 		MiddleName: src.MiddleName,
 		Email:      src.Email,
+		Password:   src.Password,
 		Group: &types.Group{
 			ID: src.GroupID,
 		},
@@ -156,6 +157,7 @@ func TypesTeacherFromCreateTeacherDTO(src CreateTeacherDTO) types.Teacher {
 		LastName:   src.LastName,
 		MiddleName: src.MiddleName,
 		Email:      src.Email,
+		Password:   src.Password,
 	}
 }
 
