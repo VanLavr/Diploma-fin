@@ -23,6 +23,7 @@ type Server struct {
 	examHandler    *ExamHandler
 	groupHandler   *GroupHandler
 	authHandler    *AuthHandler
+	fileHandler    *FileHandler
 }
 
 func NewServer(
@@ -32,6 +33,7 @@ func NewServer(
 	authHandler *AuthHandler,
 	examHandler *ExamHandler,
 	groupHandler *GroupHandler,
+	fileHandler *FileHandler,
 ) *Server {
 	return &Server{
 		cfg:            cfg,
@@ -40,6 +42,7 @@ func NewServer(
 		examHandler:    examHandler,
 		groupHandler:   groupHandler,
 		authHandler:    authHandler,
+		fileHandler:    fileHandler,
 		gin:            gin.Default(),
 	}
 }
@@ -118,4 +121,5 @@ func (s *Server) setV1Routes(group *gin.RouterGroup) {
 	s.examHandler.RegisterRoutes((v1))
 	s.groupHandler.RegisterRoutes((v1))
 	s.teacherHandler.RegisterRoutes(v1)
+	s.fileHandler.RegisterRoutes(v1)
 }

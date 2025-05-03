@@ -7,7 +7,7 @@ rebuild:
 	@docker start diploma-fin-app-1
 	@docker ps
 	@docker logs diploma-fin-app-1
-	sleep 30
+	sleep 60
 	@docker logs diploma-fin-migrate-1
 
 build:
@@ -18,7 +18,7 @@ build:
 	@docker start diploma-fin-app-1
 	@docker ps
 	@docker logs diploma-fin-app-1
-	sleep 30
+	sleep 60
 	@docker logs diploma-fin-migrate-1
 
 enterp:
