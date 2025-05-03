@@ -19,6 +19,11 @@ type groupRepo struct {
 	db *pgxpool.Pool
 }
 
+// SearchGroups implements repositories.GroupRepository.
+func (g *groupRepo) SearchGroups(context.Context, query.SearchGroupFilters) ([]models.Group, error) {
+	panic("unimplemented")
+}
+
 // CreateGroup implements repositories.GroupRepository.
 func (g *groupRepo) CreateGroup(ctx context.Context, group commands.CreateGroup) (int64, error) {
 	sql, args, err := sq.

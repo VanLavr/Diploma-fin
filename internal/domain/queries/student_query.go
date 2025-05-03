@@ -11,6 +11,19 @@ type GetGroupsFilters struct {
 	Offset int64
 }
 
+type SearchGroupFilters struct {
+	IDs   []int64
+	Names []string
+}
+
+type SearchStudentFilters struct {
+	UUIDs       []string
+	FirstNames  []string
+	LastNames   []string
+	MiddleNames []string
+	Emails      []string
+}
+
 type GetStudentsFilters struct {
 	Limit  int64
 	Offset int64

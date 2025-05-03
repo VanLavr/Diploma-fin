@@ -19,6 +19,11 @@ type teacherRepo struct {
 	db *pgxpool.Pool
 }
 
+// SearchTeachers implements repositories.TeacherRepository.
+func (this *teacherRepo) SearchTeachers(context.Context, query.SearchTeacherFilters) ([]models.Teacher, error) {
+	panic("unimplemented")
+}
+
 func NewTeacherRepo(conn *pgxpool.Pool) repositories.TeacherRepository {
 	return &teacherRepo{
 		db: conn,

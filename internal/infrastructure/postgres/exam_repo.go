@@ -26,6 +26,15 @@ func NewExamRepo(conn *pgxpool.Pool) repositories.ExamRepository {
 	}
 }
 
+// SearchDebts implements repositories.ExamRepository.
+func (this *examRepo) SearchDebts(context.Context, query.SearchDebtsFilters) ([]models.Debt, error) {
+	panic("unimplemented")
+}
+
+func (this *examRepo) SearchExams(ctx context.Context, filters query.SearchExamFilters) ([]models.Exam, error) {
+	return nil, nil
+}
+
 // CreateDebt implements repositories.ExamRepository.
 func (this *examRepo) CreateDebt(ctx context.Context, createDebt commands.CreateDebt) (int64, error) {
 	fmt.Println("DEBUG:", createDebt)

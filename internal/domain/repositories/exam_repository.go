@@ -18,4 +18,6 @@ type ExamRepository interface {
 	UpdateExam(context.Context, commands.UpdateExamByID) error
 	DeleteExam(context.Context, commands.DeleteExam) error
 	DeleteDebt(context.Context, commands.DeleteDebt) error
+	SearchExams(context.Context, query.SearchExamFilters) ([]entities.Exam, error)
+	SearchDebts(context.Context, query.SearchDebtsFilters) ([]entities.Debt, error)
 }

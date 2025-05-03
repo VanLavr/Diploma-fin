@@ -12,6 +12,24 @@ type GetTeachersFilters struct {
 	Offset int64
 }
 
+type SearchDebtsFilters struct {
+	IDs       []int64
+	ExamNames []string
+}
+
+type SearchExamFilters struct {
+	IDs   []int64
+	Names []string
+}
+
+type SearchTeacherFilters struct {
+	UUIDs       []string
+	FirstNames  []string
+	LastNames   []string
+	MiddleNames []string
+	Emails      []string
+}
+
 func (this GetTeachersFilters) Validate() error {
 	if len(this.Emails) == 0 && len(this.UUIDs) == 0 && this.Limit == 0 {
 		return log.ErrorWrapper(errors.ErrInvalidFilters, errors.ERR_DOMAIN, "")

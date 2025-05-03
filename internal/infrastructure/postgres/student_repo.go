@@ -20,6 +20,11 @@ type studentRepo struct {
 	db *pgxpool.Pool
 }
 
+// SearchStudents implements repositories.StudentRepository.
+func (this *studentRepo) SearchStudents(context.Context, query.SearchStudentFilters) ([]models.Student, error) {
+	panic("unimplemented")
+}
+
 func NewStudentRepo(conn *pgxpool.Pool) repositories.StudentRepository {
 	return &studentRepo{
 		db: conn,

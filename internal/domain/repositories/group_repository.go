@@ -14,4 +14,5 @@ type GroupRepository interface {
 	CreateGroup(context.Context, commands.CreateGroup) (int64, error)
 	UpdateGroup(context.Context, commands.UpdateGroup) error
 	DeleteGroup(context.Context, commands.DeleteGroup) error
+	SearchGroups(context.Context, query.SearchGroupFilters) ([]models.Group, error)
 }

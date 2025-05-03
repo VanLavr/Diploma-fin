@@ -14,4 +14,5 @@ type TeacherRepository interface {
 	CreateTeacher(context.Context, commands.CreateTeacher) (string, error)
 	UpdateTeacher(context.Context, commands.UpdateTeacher) error
 	DeleteTeacher(context.Context, commands.DeleteTeacher) error
+	SearchTeachers(context.Context, query.SearchTeacherFilters) ([]models.Teacher, error)
 }
