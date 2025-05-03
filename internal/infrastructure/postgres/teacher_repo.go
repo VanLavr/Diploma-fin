@@ -52,7 +52,7 @@ func (this *teacherRepo) SearchTeachers(ctx context.Context, filters query.Searc
 		query = query.Where(conditions)
 	}
 
-	sqlQuery, args, err := query.ToSql()
+	sqlQuery, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, fmt.Errorf("failed to build query: %w", err)

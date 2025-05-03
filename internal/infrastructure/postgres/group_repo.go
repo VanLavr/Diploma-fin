@@ -33,7 +33,7 @@ func (g *groupRepo) SearchGroups(ctx context.Context, filters query.SearchGroupF
 		query = query.Where(sq.Eq{"name": filters.Names})
 	}
 
-	sqlQuery, args, err := query.ToSql()
+	sqlQuery, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, fmt.Errorf("failed to build query: %w", err)

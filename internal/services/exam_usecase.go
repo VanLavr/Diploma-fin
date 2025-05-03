@@ -65,7 +65,7 @@ func (e *examUsecase) GetDebts(ctx context.Context, limit int64, offset int64) (
 				UUID:       debt.Student.UUID,
 				FirstName:  debt.Student.FirstName,
 				LastName:   debt.Student.LastName,
-				MiddleName: debt.Student.LastName,
+				MiddleName: debt.Student.MiddleName,
 				Email:      debt.Student.Email,
 				Group:      &group,
 			},

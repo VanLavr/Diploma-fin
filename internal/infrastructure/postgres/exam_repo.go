@@ -48,10 +48,10 @@ func (this *examRepo) SearchDebts(ctx context.Context, filters query.SearchDebts
 		"t.email AS teacher_email",
 	).
 		From("debts d").
-		Join("exams e ON d.exam_id = e.id").
-		Join("students s ON d.student_uuid = s.uuid").
-		Join("groups g ON s.group_id = g.id").
-		Join("teachers t ON d.teacher_uuid = t.uuid")
+		LeftJoin("exams e ON d.exam_id = e.id").
+		LeftJoin("students s ON d.student_uuid = s.uuid").
+		LeftJoin("groups g ON s.group_id = g.id").
+		LeftJoin("teachers t ON d.teacher_uuid = t.uuid")
 
 	// Apply filters
 	if len(filters.IDs) > 0 {
@@ -63,13 +63,14 @@ func (this *examRepo) SearchDebts(ctx context.Context, filters query.SearchDebts
 	}
 
 	// Build the SQL and args
-	sqlQuery, args, err := query.ToSql()
+	sqlQuery, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, fmt.Errorf("failed to build query: %w", err)
 	}
 
 	// Execute the query
+	fmt.Println("DEBUG: ", sqlQuery)
 	rows, err := this.db.Query(ctx, sqlQuery, args...)
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -143,7 +144,7 @@ func (this *examRepo) SearchExams(ctx context.Context, filters query.SearchExamF
 		query = query.Where(sq.Eq{"name": filters.Names})
 	}
 
-	sqlQuery, args, err := query.ToSql()
+	sqlQuery, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, fmt.Errorf("failed to build query: %w", err)
