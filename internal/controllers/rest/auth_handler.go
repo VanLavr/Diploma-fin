@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -69,7 +70,8 @@ func (a AuthHandler) Login(c *gin.Context) {
 	}
 
 	if len(students) == 0 {
-		if !hasher.Hshr.Validate(request.Password, teachers[0].Password) {
+		fmt.Println(teachers[0].Password)
+		if !hasher.Hshr.Validate(teachers[0].Password, request.Password) {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": errors.ErroInvalidPassword,
 			})
@@ -88,7 +90,7 @@ func (a AuthHandler) Login(c *gin.Context) {
 			"access_token": token,
 		})
 	} else {
-		if !hasher.Hshr.Validate(request.Password, students[0].Password) {
+		if !hasher.Hshr.Validate(students[0].Password, request.Password) {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": errors.ErroInvalidPassword,
 			})

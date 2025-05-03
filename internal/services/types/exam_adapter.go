@@ -66,6 +66,7 @@ func TeacherFromDomain(src *entities.Teacher) Teacher {
 		LastName:   src.LastName,
 		MiddleName: src.MiddleName,
 		Email:      src.Email,
+		Password:   src.Password,
 	}
 }
 func StudentFromDomain(src *entities.Student) Student {
@@ -81,6 +82,7 @@ func StudentFromDomain(src *entities.Student) Student {
 		LastName:   src.LastName,
 		MiddleName: src.MiddleName,
 		Email:      src.Email,
+		Password:   src.Password,
 		Group: &Group{
 			ID:   groupID,
 			Name: groupName,

@@ -51,5 +51,5 @@
 -- DELETE FROM students;
 -- DELETE FROM groups;
 -- DELETE FROM exams;
-DELETE FROM teachers;
+-- DELETE FROM teachers;
 -- +goose StatementEnd

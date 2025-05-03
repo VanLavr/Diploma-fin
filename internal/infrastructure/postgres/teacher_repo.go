@@ -214,6 +214,7 @@ func (this teacherRepo) GetTeachers(ctx context.Context, filters query.GetTeache
 		"last_name",
 		"middle_name",
 		"email",
+		"password",
 	).From("teachers")
 
 	if len(filters.UUIDs) != 0 {
@@ -248,6 +249,7 @@ func (this teacherRepo) GetTeachers(ctx context.Context, filters query.GetTeache
 			&teacher.LastName,
 			&teacher.MiddleName,
 			&teacher.Email,
+			&teacher.Password,
 		); err != nil {
 			return nil, err
 		}

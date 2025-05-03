@@ -7,6 +7,7 @@ type Student struct {
 	MiddleName string
 	Email      string
 	Group      *Group
+	Password   string
 }
 
 type Group struct {

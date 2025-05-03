@@ -230,6 +230,7 @@ func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStuden
 		"s.group_id",
 		"s.email",
 		"g.name",
+		"s.password",
 	).From("students s")
 
 	query = query.LeftJoin("groups g ON s.group_id = g.id")
@@ -263,6 +264,7 @@ func (this studentRepo) GetStudents(ctx context.Context, filters query.GetStuden
 			&stdnt.Group.ID,
 			&stdnt.Email,
 			&stdnt.Group.Name,
+			&stdnt.Password,
 		); err != nil {
 			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 			return nil, err
