@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
@@ -27,12 +28,151 @@ func NewExamRepo(conn *pgxpool.Pool) repositories.ExamRepository {
 }
 
 // SearchDebts implements repositories.ExamRepository.
-func (this *examRepo) SearchDebts(context.Context, query.SearchDebtsFilters) ([]models.Debt, error) {
-	panic("unimplemented")
+func (this *examRepo) SearchDebts(ctx context.Context, filters query.SearchDebtsFilters) ([]models.Debt, error) {
+	query := sq.Select(
+		"d.id",
+		"d.date",
+		"e.id AS exam_id",
+		"e.name AS exam_name",
+		"s.uuid AS student_id",
+		"s.first_name AS student_first_name",
+		"s.last_name AS student_last_name",
+		"s.middle_name AS student_middle_name",
+		"s.email AS student_email",
+		"g.id AS group_id",
+		"g.name AS group_name",
+		"t.uuid AS teacher_id",
+		"t.first_name AS teacher_first_name",
+		"t.last_name AS teacher_last_name",
+		"t.middle_name AS teacher_middle_name",
+		"t.email AS teacher_email",
+	).
+		From("debts d").
+		Join("exams e ON d.exam_id = e.id").
+		Join("students s ON d.student_uuid = s.uuid").
+		Join("groups g ON s.group_id = g.id").
+		Join("teachers t ON d.teacher_uuid = t.uuid")
+
+	// Apply filters
+	if len(filters.IDs) > 0 {
+		query = query.Where(sq.Eq{"d.id": filters.IDs})
+	}
+
+	if len(filters.ExamNames) > 0 {
+		query = query.Where(sq.Eq{"e.name": filters.ExamNames})
+	}
+
+	// Build the SQL and args
+	sqlQuery, args, err := query.ToSql()
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to build query: %w", err)
+	}
+
+	// Execute the query
+	rows, err := this.db.Query(ctx, sqlQuery, args...)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	var debts []models.Debt
+
+	// Scan the results
+	for rows.Next() {
+		var debt models.Debt
+		var exam models.Exam
+		var student models.Student
+		var group models.Group
+		var teacher models.Teacher
+		var date sql.NullTime
+
+		err := rows.Scan(
+			&debt.ID,
+			&date,
+			&exam.ID,
+			&exam.Name,
+			&student.UUID,
+			&student.FirstName,
+			&student.LastName,
+			&student.MiddleName,
+			&student.Email,
+			&group.ID,
+			&group.Name,
+			&teacher.UUID,
+			&teacher.FirstName,
+			&teacher.LastName,
+			&teacher.MiddleName,
+			&teacher.Email,
+		)
+		if err != nil {
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+
+		if date.Valid {
+			debt.Date = &date.Time
+		}
+
+		student.Group = &group
+		debt.Exam = &exam
+		debt.Student = &student
+		debt.Teacher = &teacher
+
+		debts = append(debts, debt)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("rows error: %w", err)
+	}
+
+	return debts, nil
 }
 
 func (this *examRepo) SearchExams(ctx context.Context, filters query.SearchExamFilters) ([]models.Exam, error) {
-	return nil, nil
+	query := sq.Select("id", "name").
+		From("exams")
+
+	if len(filters.IDs) > 0 {
+		query = query.Where(sq.Eq{"id": filters.IDs})
+	}
+
+	if len(filters.Names) > 0 {
+		query = query.Where(sq.Eq{"name": filters.Names})
+	}
+
+	sqlQuery, args, err := query.ToSql()
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to build query: %w", err)
+	}
+
+	rows, err := this.db.Query(ctx, sqlQuery, args...)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	var exams []models.Exam
+	for rows.Next() {
+		var exam models.Exam
+		if err := rows.Scan(&exam.ID, &exam.Name); err != nil {
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+			return nil, fmt.Errorf("failed to scan exam: %w", err)
+		}
+		exams = append(exams, exam)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("rows error: %w", err)
+	}
+
+	return exams, nil
+
 }
 
 // CreateDebt implements repositories.ExamRepository.

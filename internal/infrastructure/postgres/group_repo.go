@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -20,8 +21,48 @@ type groupRepo struct {
 }
 
 // SearchGroups implements repositories.GroupRepository.
-func (g *groupRepo) SearchGroups(context.Context, query.SearchGroupFilters) ([]models.Group, error) {
-	panic("unimplemented")
+func (g *groupRepo) SearchGroups(ctx context.Context, filters query.SearchGroupFilters) ([]models.Group, error) {
+	query := sq.Select("id", "name").
+		From("groups")
+
+	if len(filters.IDs) > 0 {
+		query = query.Where(sq.Eq{"id": filters.IDs})
+	}
+
+	if len(filters.Names) > 0 {
+		query = query.Where(sq.Eq{"name": filters.Names})
+	}
+
+	sqlQuery, args, err := query.ToSql()
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to build query: %w", err)
+	}
+
+	rows, err := g.db.Query(ctx, sqlQuery, args...)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	var groups []models.Group
+	for rows.Next() {
+		var group models.Group
+		if err := rows.Scan(&group.ID, &group.Name); err != nil {
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+			return nil, fmt.Errorf("failed to scan group: %w", err)
+		}
+		groups = append(groups, group)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("rows error: %w", err)
+	}
+
+	return groups, nil
+
 }
 
 // CreateGroup implements repositories.GroupRepository.

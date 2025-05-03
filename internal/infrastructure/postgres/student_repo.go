@@ -21,8 +21,77 @@ type studentRepo struct {
 }
 
 // SearchStudents implements repositories.StudentRepository.
-func (this *studentRepo) SearchStudents(context.Context, query.SearchStudentFilters) ([]models.Student, error) {
-	panic("unimplemented")
+func (this *studentRepo) SearchStudents(ctx context.Context, filters query.SearchStudentFilters) ([]models.Student, error) {
+	query := sq.Select(
+		"uuid",
+		"first_name",
+		"last_name",
+		"middle_name",
+		"email",
+		"group_id",
+	).
+		From("students")
+
+	conditions := sq.And{}
+	if len(filters.UUIDs) > 0 {
+		conditions = append(conditions, sq.Eq{"uuid": filters.UUIDs})
+	}
+	if len(filters.FirstNames) > 0 {
+		conditions = append(conditions, sq.Eq{"first_name": filters.FirstNames})
+	}
+	if len(filters.LastNames) > 0 {
+		conditions = append(conditions, sq.Eq{"last_name": filters.LastNames})
+	}
+	if len(filters.MiddleNames) > 0 {
+		conditions = append(conditions, sq.Eq{"middle_name": filters.MiddleNames})
+	}
+	if len(filters.Emails) > 0 {
+		conditions = append(conditions, sq.Eq{"email": filters.Emails})
+	}
+
+	if len(conditions) > 0 {
+		query = query.Where(conditions)
+	}
+
+	sqlQuery, args, err := query.ToSql()
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to build query: %w", err)
+	}
+
+	rows, err := this.db.Query(ctx, sqlQuery, args...)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	var students []models.Student
+	for rows.Next() {
+		var student models.Student
+		var groupID int64
+		if err := rows.Scan(
+			&student.UUID,
+			&student.FirstName,
+			&student.LastName,
+			&student.MiddleName,
+			&student.Email,
+			&groupID,
+		); err != nil {
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+			return nil, fmt.Errorf("failed to scan student: %w", err)
+		}
+		// You might want to fetch the group details here if needed
+		student.Group = &models.Group{ID: groupID}
+		students = append(students, student)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("rows error: %w", err)
+	}
+
+	return students, nil
 }
 
 func NewStudentRepo(conn *pgxpool.Pool) repositories.StudentRepository {

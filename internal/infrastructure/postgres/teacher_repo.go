@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -20,8 +21,72 @@ type teacherRepo struct {
 }
 
 // SearchTeachers implements repositories.TeacherRepository.
-func (this *teacherRepo) SearchTeachers(context.Context, query.SearchTeacherFilters) ([]models.Teacher, error) {
-	panic("unimplemented")
+func (this *teacherRepo) SearchTeachers(ctx context.Context, filters query.SearchTeacherFilters) ([]models.Teacher, error) {
+	query := sq.Select(
+		"uuid",
+		"first_name",
+		"last_name",
+		"middle_name",
+		"email",
+	).
+		From("teachers")
+
+	conditions := sq.And{}
+	if len(filters.UUIDs) > 0 {
+		conditions = append(conditions, sq.Eq{"uuid": filters.UUIDs})
+	}
+	if len(filters.FirstNames) > 0 {
+		conditions = append(conditions, sq.Eq{"first_name": filters.FirstNames})
+	}
+	if len(filters.LastNames) > 0 {
+		conditions = append(conditions, sq.Eq{"last_name": filters.LastNames})
+	}
+	if len(filters.MiddleNames) > 0 {
+		conditions = append(conditions, sq.Eq{"middle_name": filters.MiddleNames})
+	}
+	if len(filters.Emails) > 0 {
+		conditions = append(conditions, sq.Eq{"email": filters.Emails})
+	}
+
+	if len(conditions) > 0 {
+		query = query.Where(conditions)
+	}
+
+	sqlQuery, args, err := query.ToSql()
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to build query: %w", err)
+	}
+
+	rows, err := this.db.Query(ctx, sqlQuery, args...)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	var teachers []models.Teacher
+	for rows.Next() {
+		var teacher models.Teacher
+		if err := rows.Scan(
+			&teacher.UUID,
+			&teacher.FirstName,
+			&teacher.LastName,
+			&teacher.MiddleName,
+			&teacher.Email,
+		); err != nil {
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+			return nil, fmt.Errorf("failed to scan teacher: %w", err)
+		}
+		teachers = append(teachers, teacher)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return nil, fmt.Errorf("rows error: %w", err)
+	}
+
+	return teachers, nil
 }
 
 func NewTeacherRepo(conn *pgxpool.Pool) repositories.TeacherRepository {
