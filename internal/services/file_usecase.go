@@ -227,11 +227,30 @@ func (fu *fileUsecase) CreateTeacherIfNotExists(ctx context.Context, teacher typ
 		return teachersFound[0].UUID, nil
 	}
 
+	// 1) generate password
+	pass, err := generator.GeneratePassword(generator.DEFAULTLEN)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return "", err
+	}
+
+	// 2) send password to student's email
+	err = fu.repo.SendPassword(ctx, teacher.Email, pass)
+	switch {
+	case err == nil:
+	case e.Is(err, errors.ErrInvalidData):
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+	default:
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return "", err
+	}
+
 	id, err := fu.repo.CreateTeacher(ctx, commands.CreateTeacher{
 		FirstName:  teacher.FirstName,
 		LastName:   teacher.LastName,
 		MiddleName: teacher.MiddleName,
 		Email:      teacher.Email,
+		Password:   hasher.Hshr.Hash(pass),
 	})
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

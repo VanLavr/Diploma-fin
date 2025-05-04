@@ -33,17 +33,17 @@ func NewStudentMailer(cfg *config.Config) repositories.StudentMailer {
 }
 
 // SendPassword implements repositories.StudentMailer.
-func (this *mailer) SendPassword(ctx context.Context, studentEmail, password string) error {
-	if studentEmail == "" || !strings.Contains(studentEmail, "@") {
+func (this *mailer) SendPassword(ctx context.Context, email, password string) error {
+	if email == "" || !strings.Contains(email, "@") {
 		log.Logger.Error(errors.ErrInvalidData.Error(), errors.MethodKey, log.GetMethodName())
 		return errors.ErrInvalidData
 	}
 	fmt.Println("20", this.OAuthCode)
 
-	subject := fmt.Sprintf("Subject: New user account for: %s\n", studentEmail)
+	subject := fmt.Sprintf("Subject: New user account for: %s\n", email)
 	body := fmt.Sprintf(
 		valueobjects.NewPasswordNotification,
-		studentEmail,
+		email,
 		password,
 	)
 
@@ -60,7 +60,7 @@ func (this *mailer) SendPassword(ctx context.Context, studentEmail, password str
 		this.SMTPHost+":"+this.SMTPPort,
 		auth,
 		this.AuthEmail,
-		[]string{studentEmail},
+		[]string{email},
 		msg,
 	); err != nil {
 		fmt.Println("21")
@@ -68,7 +68,7 @@ func (this *mailer) SendPassword(ctx context.Context, studentEmail, password str
 		return fmt.Errorf("failed to send email: %w", err)
 	}
 
-	fmt.Println("Email sent successfully to", studentEmail)
+	fmt.Println("Email sent successfully to", email)
 	return nil
 }
 
