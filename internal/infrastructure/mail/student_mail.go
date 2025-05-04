@@ -36,7 +36,7 @@ func NewStudentMailer(cfg *config.Config) repositories.StudentMailer {
 func (this *mailer) SendPassword(ctx context.Context, studentEmail, password string) error {
 	if studentEmail == "" || !strings.Contains(studentEmail, "@") {
 		log.Logger.Error(errors.ErrInvalidData.Error(), errors.MethodKey, log.GetMethodName())
-		return fmt.Errorf("correct student email is required")
+		return errors.ErrInvalidData
 	}
 	fmt.Println("20", this.OAuthCode)
 

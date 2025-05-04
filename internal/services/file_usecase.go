@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	e "errors"
 	"fmt"
 	"strings"
 	"time"
@@ -188,7 +189,12 @@ func (fu *fileUsecase) CreateStudentIfNotExists(ctx context.Context, student typ
 	}
 
 	// 2) send password to student's email
-	if err := fu.repo.SendPassword(ctx, student.Email, pass); err != nil {
+	err = fu.repo.SendPassword(ctx, student.Email, pass)
+	switch {
+	case err == nil:
+	case e.Is(err, errors.ErrInvalidData):
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+	default:
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return "", err
 	}
