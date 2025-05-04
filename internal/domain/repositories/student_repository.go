@@ -15,6 +15,7 @@ type StudentRepository interface {
 	UpdateStudent(context.Context, commands.UpdateStudent) error
 	DeleteStudent(context.Context, commands.DeleteStudent) error
 	SearchStudents(context.Context, query.SearchStudentFilters) ([]models.Student, error)
+	ChangeStudentPassword(context.Context, string, string) error
 }
 
 type StudentMailer interface {

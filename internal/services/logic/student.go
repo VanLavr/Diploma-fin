@@ -15,4 +15,5 @@ type StudentUsecase interface {
 	CreateStudent(context.Context, types.Student) (string, error)
 	GetStudents(context.Context, int64, int64) ([]types.Student, error)
 	GetStudent(context.Context, string) (*types.Student, error)
+	ChangePassword(context.Context, string, string) error
 }

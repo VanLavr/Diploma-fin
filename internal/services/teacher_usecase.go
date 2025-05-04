@@ -26,6 +26,11 @@ func NewTeacherUsecase(repo repositories.Repository) logic.TeacherUsecase {
 	}
 }
 
+// ChangePassword implements logic.TeacherUsecase.
+func (t *teacherUsecase) ChangePassword(ctx context.Context, uuid, password string) error {
+	return t.repo.ChangeTeacherPassword(ctx, uuid, password)
+}
+
 // CreateTeacher implements logic.TeacherUsecase.
 func (t *teacherUsecase) CreateTeacher(ctx context.Context, teacher types.Teacher) (string, error) {
 	uuid, err := t.repo.CreateTeacher(ctx, commands.CreateTeacher{

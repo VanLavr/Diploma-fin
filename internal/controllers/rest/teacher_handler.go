@@ -11,6 +11,7 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
 	"github.com/VanLavr/Diploma-fin/utils/auth"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/hasher"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
@@ -34,6 +35,48 @@ func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
 	group.DELETE("/teacher/:uuid", this.DeleteTeacher)         // + admin
 	group.GET("/teacher/all/:limit/:offset", this.GetTeachers) // + admin
 	group.GET("/teacher/:uuid", this.GetTeacher)               // + admin,teacher
+	group.PUT("/teacher/pass", this.UpdateTeacherPassword)     // + teacher
+}
+
+func (t TeacherHandler) UpdateTeacherPassword(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.TeacherRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
+		return
+	}
+
+	var r dto.UpdateTeacherPasswordDTO
+	if err := c.Bind(&r); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	teacher, err := t.teacherUsecase.GetTeacher(c.Request.Context(), r.UUID)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if !hasher.Hshr.Validate(teacher.Password, r.OldPassword) {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": errors.ErroInvalidPassword.Error(),
+		})
+		return
+	}
+
+	if err := t.teacherUsecase.ChangePassword(c.Request.Context(), r.UUID, r.NewPassword); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"password": "changed"})
 }
 
 func (t TeacherHandler) GetTeacher(c *gin.Context) {

@@ -20,6 +20,31 @@ type teacherRepo struct {
 	db *pgxpool.Pool
 }
 
+// ChangeTeacherPassword implements repositories.TeacherRepository.
+func (this *teacherRepo) ChangeTeacherPassword(ctx context.Context, uuid, password string) error {
+	query := sq.Update("teachers").
+		Set("password", password).
+		Where(sq.Eq{"uuid": uuid}).
+		PlaceholderFormat(sq.Dollar)
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	if tx, ok := tools.GetTransaction(ctx); ok {
+		_, err = tx.Exec(ctx, sql, args...)
+	} else {
+		_, err = this.db.Exec(ctx, sql, args...)
+	}
+
+	if err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return nil
+}
+
 // SearchTeachers implements repositories.TeacherRepository.
 func (this *teacherRepo) SearchTeachers(ctx context.Context, filters query.SearchTeacherFilters) ([]models.Teacher, error) {
 	query := sq.Select(

@@ -125,6 +125,16 @@ type Group struct {
 	Name string `json:"name"`
 }
 
+type UpdateTeacherPasswordDTO struct {
+	UUID        string `json:"uuid"`
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
+type UpdateStudentPasswordDTO struct {
+	UUID        string `json:"uuid"`
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
 type UpdateStudentDTO struct {
 	UUID       string `json:"uuid"`
 	FirstName  string `json:"first_name"`

@@ -20,6 +20,31 @@ type studentRepo struct {
 	db *pgxpool.Pool
 }
 
+// ChangeStudentPassword implements repositories.StudentRepository.
+func (this *studentRepo) ChangeStudentPassword(ctx context.Context, uuid, password string) error {
+	query := sq.Update("students").
+		Set("password", password).
+		Where(sq.Eq{"uuid": uuid}).
+		PlaceholderFormat(sq.Dollar)
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	if tx, ok := tools.GetTransaction(ctx); ok {
+		_, err = tx.Exec(ctx, sql, args...)
+	} else {
+		_, err = this.db.Exec(ctx, sql, args...)
+	}
+
+	if err != nil {
+		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return nil
+}
+
 // SearchStudents implements repositories.StudentRepository.
 func (this *studentRepo) SearchStudents(ctx context.Context, filters query.SearchStudentFilters) ([]models.Student, error) {
 	query := sq.Select(

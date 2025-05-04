@@ -25,6 +25,11 @@ func NewStudentUsecase(repo repositories.Repository) logic.StudentUsecase {
 	}
 }
 
+// ChangePassword implements logic.StudentUsecase.
+func (this *studentUsecase) ChangePassword(ctx context.Context, uuid, password string) error {
+	return this.repo.ChangeStudentPassword(ctx, uuid, password)
+}
+
 // CreateStudent implements logic.StudentUsecase.
 func (this *studentUsecase) CreateStudent(ctx context.Context, student types.Student) (string, error) {
 	uuid, err := this.repo.CreateStudent(ctx, commands.CreateStudent{
