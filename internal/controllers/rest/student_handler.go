@@ -67,7 +67,7 @@ func (s StudentHandler) UpdatePassword(c *gin.Context) {
 		return
 	}
 
-	if err := s.studentUsecase.ChangePassword(c.Request.Context(), r.UUID, r.NewPassword); err != nil {
+	if err := s.studentUsecase.ChangePassword(c.Request.Context(), r.UUID, hasher.Hshr.Hash(r.NewPassword)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

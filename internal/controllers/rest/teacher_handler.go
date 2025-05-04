@@ -69,7 +69,7 @@ func (t TeacherHandler) UpdateTeacherPassword(c *gin.Context) {
 		return
 	}
 
-	if err := t.teacherUsecase.ChangePassword(c.Request.Context(), r.UUID, r.NewPassword); err != nil {
+	if err := t.teacherUsecase.ChangePassword(c.Request.Context(), r.UUID, hasher.Hshr.Hash(r.NewPassword)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
