@@ -38,7 +38,7 @@ func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
 
 func (t TeacherHandler) GetTeacher(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.TeacherRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -63,7 +63,7 @@ func (t TeacherHandler) GetTeacher(c *gin.Context) {
 
 func (t TeacherHandler) CreateTeacher(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -93,7 +93,7 @@ func (t TeacherHandler) CreateTeacher(c *gin.Context) {
 
 func (t TeacherHandler) UpdateTeacher(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.TeacherRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -122,7 +122,7 @@ func (t TeacherHandler) UpdateTeacher(c *gin.Context) {
 
 func (t TeacherHandler) DeleteTeacher(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -142,7 +142,7 @@ func (t TeacherHandler) DeleteTeacher(c *gin.Context) {
 
 func (t TeacherHandler) GetTeachers(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -188,7 +188,7 @@ func (t TeacherHandler) GetTeachers(c *gin.Context) {
 
 func (this TeacherHandler) setDate(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.TeacherRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -213,7 +213,7 @@ func (this TeacherHandler) setDate(c *gin.Context) {
 
 func (this TeacherHandler) getAllDebts(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.TeacherRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 

@@ -25,7 +25,7 @@ func (fh FileHandler) RegisterRoutes(group *gin.RouterGroup) {
 
 func (fh FileHandler) ParsFile(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 

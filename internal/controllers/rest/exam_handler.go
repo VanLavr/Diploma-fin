@@ -40,7 +40,7 @@ func (this ExamHandler) RegisterRoutes(group *gin.RouterGroup) {
 
 func (e ExamHandler) GetDebt(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -73,7 +73,7 @@ func (e ExamHandler) GetDebt(c *gin.Context) {
 
 func (e ExamHandler) GetExam(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -106,7 +106,7 @@ func (e ExamHandler) GetExam(c *gin.Context) {
 
 func (this ExamHandler) GetDebts(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -152,7 +152,7 @@ func (this ExamHandler) GetDebts(c *gin.Context) {
 
 func (this ExamHandler) GetExams(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -198,7 +198,7 @@ func (this ExamHandler) GetExams(c *gin.Context) {
 
 func (this ExamHandler) DeleteExam(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -228,7 +228,7 @@ func (this ExamHandler) DeleteExam(c *gin.Context) {
 
 func (this ExamHandler) DeleteDebt(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -258,7 +258,7 @@ func (this ExamHandler) DeleteDebt(c *gin.Context) {
 
 func (this ExamHandler) UpdateDebt(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -296,7 +296,7 @@ func (this ExamHandler) UpdateDebt(c *gin.Context) {
 
 func (this ExamHandler) UpdateExam(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -325,7 +325,7 @@ func (this ExamHandler) UpdateExam(c *gin.Context) {
 
 func (this ExamHandler) CreateExam(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -355,7 +355,7 @@ func (this ExamHandler) CreateExam(c *gin.Context) {
 
 func (this ExamHandler) CreateDebt(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 

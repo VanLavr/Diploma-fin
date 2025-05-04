@@ -33,7 +33,7 @@ func (this GroupHandler) RegisterRoutes(group *gin.RouterGroup) {
 
 func (g GroupHandler) CreateGroup(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -62,7 +62,7 @@ func (g GroupHandler) CreateGroup(c *gin.Context) {
 }
 func (g GroupHandler) UpdateGroup(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -90,7 +90,7 @@ func (g GroupHandler) UpdateGroup(c *gin.Context) {
 }
 func (g GroupHandler) DeleteGroup(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -119,7 +119,7 @@ func (g GroupHandler) DeleteGroup(c *gin.Context) {
 }
 func (g GroupHandler) GetGroups(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
@@ -164,7 +164,7 @@ func (g GroupHandler) GetGroups(c *gin.Context) {
 }
 func (g GroupHandler) GetGroup(c *gin.Context) {
 	if c.Value(auth.RoleKey) != auth.AdminRole {
-		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
 
