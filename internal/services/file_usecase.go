@@ -15,6 +15,7 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/services/types"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/VanLavr/Diploma-fin/utils/generator"
+	"github.com/VanLavr/Diploma-fin/utils/hasher"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
@@ -198,7 +199,7 @@ func (fu *fileUsecase) CreateStudentIfNotExists(ctx context.Context, student typ
 		MiddleName: student.MiddleName,
 		GroupID:    groupID,
 		Email:      student.Email,
-		Password:   pass,
+		Password:   hasher.Hshr.Hash(pass),
 	})
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
