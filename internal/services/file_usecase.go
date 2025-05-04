@@ -14,6 +14,7 @@ import (
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
 	"github.com/VanLavr/Diploma-fin/internal/services/types"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
+	"github.com/VanLavr/Diploma-fin/utils/generator"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
 
@@ -178,12 +179,26 @@ func (fu *fileUsecase) CreateStudentIfNotExists(ctx context.Context, student typ
 		return "", err
 	}
 
+	// 1) generate password
+	pass, err := generator.GeneratePassword(generator.DEFAULTLEN)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return "", err
+	}
+
+	// 2) send password to student's email
+	if err := fu.repo.SendPassword(ctx, student.Email, pass); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return "", err
+	}
+
 	id, err := fu.repo.CreateStudent(ctx, commands.CreateStudent{
 		FirstName:  student.FirstName,
 		LastName:   student.LastName,
 		MiddleName: student.MiddleName,
 		GroupID:    groupID,
 		Email:      student.Email,
+		Password:   pass,
 	})
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

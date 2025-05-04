@@ -13,6 +13,7 @@ const (
 
 var ErrInvalidFilters = errors.New("search filters are invalid")
 var ErrInvalidCommand = errors.New("insert, delete or update command is invalid")
+var ErrInvalidData = errors.New("provided data is invalid")
 var ErroNoItemsFound = errors.New("no items found")
 var ErroInvalidPassword = errors.New("wrong password")
 var ErrUserDoesNotHaveRights = errors.New("user doesn't have required rights")

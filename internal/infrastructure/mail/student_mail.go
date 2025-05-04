@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/smtp"
+	"strings"
 
 	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
@@ -29,6 +30,46 @@ func NewStudentMailer(cfg *config.Config) repositories.StudentMailer {
 		AuthPassword: cfg.AuthEmailPassword,
 		OAuthCode:    cfg.SMTP2OAuthCode,
 	}
+}
+
+// SendPassword implements repositories.StudentMailer.
+func (this *mailer) SendPassword(ctx context.Context, studentEmail, password string) error {
+	if studentEmail == "" || !strings.Contains(studentEmail, "@") {
+		log.Logger.Error(errors.ErrInvalidData.Error(), errors.MethodKey, log.GetMethodName())
+		return fmt.Errorf("correct student email is required")
+	}
+	fmt.Println("20", this.OAuthCode)
+
+	subject := fmt.Sprintf("Subject: New user account for: %s\n", studentEmail)
+	body := fmt.Sprintf(
+		valueobjects.NewPasswordNotification,
+		studentEmail,
+		password,
+	)
+
+	msg := []byte(subject + "\n" + body)
+
+	auth := smtp.PlainAuth(
+		"",
+		this.AuthEmail,
+		this.OAuthCode,
+		this.SMTPHost,
+	)
+
+	if err := smtp.SendMail(
+		this.SMTPHost+":"+this.SMTPPort,
+		auth,
+		this.AuthEmail,
+		[]string{studentEmail},
+		msg,
+	); err != nil {
+		fmt.Println("21")
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return fmt.Errorf("failed to send email: %w", err)
+	}
+
+	fmt.Println("Email sent successfully to", studentEmail)
+	return nil
 }
 
 func (this mailer) SendNotification(ctx context.Context, student models.Student, teacherEmail string, exam models.Exam) error {
