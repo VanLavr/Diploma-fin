@@ -8,6 +8,7 @@ import (
 
 	"github.com/VanLavr/Diploma-fin/internal/controllers/dto"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
+	"github.com/VanLavr/Diploma-fin/utils/auth"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
@@ -23,14 +24,19 @@ func NewGroupHandler(groupUsecase logic.GroupUsecase) *GroupHandler {
 }
 
 func (this GroupHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.POST("/group", this.CreateGroup)                 // +
-	group.PUT("/group", this.UpdateGroup)                  // +
-	group.DELETE("/group/:id", this.DeleteGroup)           // +
-	group.GET("/group/all/:limit/:offset", this.GetGroups) // +
-	group.GET("/group/:id", this.GetGroup)                 // +
+	group.POST("/group", this.CreateGroup)                 // + admin
+	group.PUT("/group", this.UpdateGroup)                  // + admin
+	group.DELETE("/group/:id", this.DeleteGroup)           // + admin
+	group.GET("/group/all/:limit/:offset", this.GetGroups) // + admin
+	group.GET("/group/:id", this.GetGroup)                 // + admin
 }
 
 func (g GroupHandler) CreateGroup(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.CreateGroupDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -55,6 +61,11 @@ func (g GroupHandler) CreateGroup(c *gin.Context) {
 	})
 }
 func (g GroupHandler) UpdateGroup(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.UpdateGroupDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -78,6 +89,11 @@ func (g GroupHandler) UpdateGroup(c *gin.Context) {
 	})
 }
 func (g GroupHandler) DeleteGroup(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -102,6 +118,11 @@ func (g GroupHandler) DeleteGroup(c *gin.Context) {
 	})
 }
 func (g GroupHandler) GetGroups(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	lim := c.Param("limit")
 	limit, err := strconv.Atoi(lim)
 	if err != nil {
@@ -142,6 +163,11 @@ func (g GroupHandler) GetGroups(c *gin.Context) {
 	})
 }
 func (g GroupHandler) GetGroup(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {

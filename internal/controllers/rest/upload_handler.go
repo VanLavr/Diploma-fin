@@ -7,6 +7,8 @@ import (
 	"github.com/xuri/excelize/v2"
 
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
+	"github.com/VanLavr/Diploma-fin/utils/auth"
+	"github.com/VanLavr/Diploma-fin/utils/errors"
 )
 
 type FileHandler struct {
@@ -18,10 +20,15 @@ func NewFileHandler(fUsecase logic.FileUsecase) *FileHandler {
 }
 
 func (fh FileHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.POST("/file/upload", fh.ParsFile)
+	group.POST("/file/upload", fh.ParsFile) // + admin
 }
 
 func (fh FileHandler) ParsFile(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to get file from form: " + err.Error()})

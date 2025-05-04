@@ -9,6 +9,7 @@ import (
 
 	"github.com/VanLavr/Diploma-fin/internal/controllers/dto"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
+	"github.com/VanLavr/Diploma-fin/utils/auth"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
@@ -24,16 +25,21 @@ func NewStudentHandler(studentUsecase logic.StudentUsecase) *StudentHandler {
 }
 
 func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("/student/all_debts/:UUID", this.getAllDebts)          // +
-	group.POST("/notification/:UUID/:examID", this.sendNotification) // +
-	group.POST("/student", this.CreateStudent)                       // +
-	group.PUT("/student", this.UpdateStudent)                        // +
-	group.DELETE("/student/:uuid", this.DeleteStduent)               // +
-	group.GET("/student/all/:limit/:offset", this.GetStudents)       // +
-	group.GET("/student/:uuid", this.GetStudent)                     // +
+	group.GET("/student/all_debts/:UUID", this.getAllDebts)          // + student
+	group.POST("/notification/:UUID/:examID", this.sendNotification) // + student
+	group.POST("/student", this.CreateStudent)                       // + admin
+	group.PUT("/student", this.UpdateStudent)                        // + admin,student
+	group.DELETE("/student/:uuid", this.DeleteStduent)               // + admin
+	group.GET("/student/all/:limit/:offset", this.GetStudents)       // + admin
+	group.GET("/student/:uuid", this.GetStudent)                     // + admin,student
 }
 
 func (s StudentHandler) GetStudent(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.StudentRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	uuid := c.Param("uuid")
 
 	student, err := s.studentUsecase.GetStudent(c.Request.Context(), uuid)
@@ -54,6 +60,11 @@ func (s StudentHandler) GetStudent(c *gin.Context) {
 }
 
 func (this StudentHandler) GetStudents(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	lim := c.Param("limit")
 	limit, err := strconv.Atoi(lim)
 	if err != nil {
@@ -95,6 +106,11 @@ func (this StudentHandler) GetStudents(c *gin.Context) {
 }
 
 func (this StudentHandler) DeleteStduent(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	if err := this.studentUsecase.DeleteStudent(c.Request.Context(), c.Param("uuid")); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -110,6 +126,11 @@ func (this StudentHandler) DeleteStduent(c *gin.Context) {
 }
 
 func (this StudentHandler) UpdateStudent(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.StudentRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.UpdateStudentDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -134,6 +155,11 @@ func (this StudentHandler) UpdateStudent(c *gin.Context) {
 }
 
 func (this StudentHandler) CreateStudent(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.CreateStudentDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -159,6 +185,11 @@ func (this StudentHandler) CreateStudent(c *gin.Context) {
 }
 
 func (this StudentHandler) sendNotification(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.StudentRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	id := c.Param("examID")
 	fmt.Println("1")
 	examID, err := strconv.ParseInt(id, 10, 64)
@@ -189,6 +220,11 @@ func (this StudentHandler) sendNotification(c *gin.Context) {
 }
 
 func (this StudentHandler) getAllDebts(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.StudentRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	debts, err := this.studentUsecase.GetAllDebts(c.Request.Context(), c.Param("UUID"))
 	switch {
 	case err == nil:

@@ -12,7 +12,7 @@ create table if not exists students(
     first_name text,
     last_name text,
     middle_name text,
-    email text,
+    email text unique,
     password text,
     group_id integer references groups(id)
 );
@@ -22,7 +22,7 @@ create table if not exists teachers(
     first_name text,
     last_name text,
     middle_name text,
-    email text,
+    email text unique,
     password text
 );
 

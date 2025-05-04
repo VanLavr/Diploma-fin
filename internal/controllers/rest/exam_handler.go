@@ -25,20 +25,25 @@ func NewExamHandler(examUsecase logic.ExamUsecase) *ExamHandler {
 }
 
 func (this ExamHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.POST("/exam", this.CreateExam)                 // +
-	group.PUT("/exam", this.UpdateExam)                  // +
-	group.DELETE("/exam/:id", this.DeleteExam)           // +
-	group.GET("/exam/all/:limit/:offset", this.GetExams) // +
-	group.GET("/exam/:id", this.GetExam)                 // +
+	group.POST("/exam", this.CreateExam)                 // + admin
+	group.PUT("/exam", this.UpdateExam)                  // + admin
+	group.DELETE("/exam/:id", this.DeleteExam)           // + admin
+	group.GET("/exam/all/:limit/:offset", this.GetExams) // + admin
+	group.GET("/exam/:id", this.GetExam)                 // + admin
 
-	group.DELETE("/debt/:id", this.DeleteDebt)           // +
-	group.PUT("/debt", this.UpdateDebt)                  // +
-	group.POST("/debt", this.CreateDebt)                 // +
-	group.GET("/debt/:id", this.GetDebt)                 // +
-	group.GET("/debt/all/:limit/:offset", this.GetDebts) // +
+	group.DELETE("/debt/:id", this.DeleteDebt)           // + admin
+	group.PUT("/debt", this.UpdateDebt)                  // + admin
+	group.POST("/debt", this.CreateDebt)                 // + admin
+	group.GET("/debt/:id", this.GetDebt)                 // + admin
+	group.GET("/debt/all/:limit/:offset", this.GetDebts) // + admin
 }
 
 func (e ExamHandler) GetDebt(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -67,6 +72,11 @@ func (e ExamHandler) GetDebt(c *gin.Context) {
 }
 
 func (e ExamHandler) GetExam(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -95,6 +105,11 @@ func (e ExamHandler) GetExam(c *gin.Context) {
 }
 
 func (this ExamHandler) GetDebts(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	lim := c.Param("limit")
 	limit, err := strconv.Atoi(lim)
 	if err != nil {
@@ -136,7 +151,11 @@ func (this ExamHandler) GetDebts(c *gin.Context) {
 }
 
 func (this ExamHandler) GetExams(c *gin.Context) {
-	fmt.Println(c.Value(auth.RoleKey))
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	lim := c.Param("limit")
 	limit, err := strconv.Atoi(lim)
 	if err != nil {
@@ -178,6 +197,11 @@ func (this ExamHandler) GetExams(c *gin.Context) {
 }
 
 func (this ExamHandler) DeleteExam(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -203,6 +227,11 @@ func (this ExamHandler) DeleteExam(c *gin.Context) {
 }
 
 func (this ExamHandler) DeleteDebt(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -228,6 +257,11 @@ func (this ExamHandler) DeleteDebt(c *gin.Context) {
 }
 
 func (this ExamHandler) UpdateDebt(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.UpdateDebtDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -261,6 +295,11 @@ func (this ExamHandler) UpdateDebt(c *gin.Context) {
 }
 
 func (this ExamHandler) UpdateExam(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.UpdateExamDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -285,6 +324,11 @@ func (this ExamHandler) UpdateExam(c *gin.Context) {
 }
 
 func (this ExamHandler) CreateExam(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.CreateExamDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -310,6 +354,11 @@ func (this ExamHandler) CreateExam(c *gin.Context) {
 }
 
 func (this ExamHandler) CreateDebt(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.CreateDebtDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

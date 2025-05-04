@@ -9,6 +9,7 @@ import (
 
 	"github.com/VanLavr/Diploma-fin/internal/controllers/dto"
 	"github.com/VanLavr/Diploma-fin/internal/services/logic"
+	"github.com/VanLavr/Diploma-fin/utils/auth"
 	"github.com/VanLavr/Diploma-fin/utils/errors"
 	"github.com/VanLavr/Diploma-fin/utils/log"
 )
@@ -26,16 +27,21 @@ func NewTeacherHandler(teacherUsecase logic.TeacherUsecase, studentUsecase logic
 }
 
 func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("/teacher/all_debts/:UUID", this.getAllDebts)    // +
-	group.POST("/set_date", this.setDate)                      // +
-	group.POST("/teacher", this.CreateTeacher)                 // +
-	group.PUT("/teacher", this.UpdateTeacher)                  // +
-	group.DELETE("/teacher/:uuid", this.DeleteTeacher)         // +
-	group.GET("/teacher/all/:limit/:offset", this.GetTeachers) // +
-	group.GET("/teacher/:uuid", this.GetTeacher)               // +
+	group.GET("/teacher/all_debts/:UUID", this.getAllDebts)    // + teacher
+	group.POST("/set_date", this.setDate)                      // + teacher
+	group.POST("/teacher", this.CreateTeacher)                 // + admin
+	group.PUT("/teacher", this.UpdateTeacher)                  // + admin,teacher
+	group.DELETE("/teacher/:uuid", this.DeleteTeacher)         // + admin
+	group.GET("/teacher/all/:limit/:offset", this.GetTeachers) // + admin
+	group.GET("/teacher/:uuid", this.GetTeacher)               // + admin,teacher
 }
 
 func (t TeacherHandler) GetTeacher(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.TeacherRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	uuid := c.Param("uuid")
 
 	teacher, err := t.teacherUsecase.GetTeacher(c.Request.Context(), uuid)
@@ -56,6 +62,11 @@ func (t TeacherHandler) GetTeacher(c *gin.Context) {
 }
 
 func (t TeacherHandler) CreateTeacher(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.CreateTeacherDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -81,6 +92,11 @@ func (t TeacherHandler) CreateTeacher(c *gin.Context) {
 }
 
 func (t TeacherHandler) UpdateTeacher(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.TeacherRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var r dto.UpdateTeacherDTO
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -105,6 +121,11 @@ func (t TeacherHandler) UpdateTeacher(c *gin.Context) {
 }
 
 func (t TeacherHandler) DeleteTeacher(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	if err := t.teacherUsecase.DeleteTeacher(c.Request.Context(), c.Param("uuid")); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -120,6 +141,11 @@ func (t TeacherHandler) DeleteTeacher(c *gin.Context) {
 }
 
 func (t TeacherHandler) GetTeachers(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.AdminRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	lim := c.Param("limit")
 	limit, err := strconv.Atoi(lim)
 	if err != nil {
@@ -161,6 +187,11 @@ func (t TeacherHandler) GetTeachers(c *gin.Context) {
 }
 
 func (this TeacherHandler) setDate(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.TeacherRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	var request dto.SetDebtDateDTO
 	if err := c.Bind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -181,6 +212,11 @@ func (this TeacherHandler) setDate(c *gin.Context) {
 }
 
 func (this TeacherHandler) getAllDebts(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.TeacherRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights})
+		return
+	}
+
 	debts, err := this.teacherUsecase.GetAllDebts(c.Request.Context(), c.Param("UUID"))
 	switch {
 	case err == nil:
