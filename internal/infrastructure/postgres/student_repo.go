@@ -134,6 +134,7 @@ func (this *studentRepo) GetStudentByUUID(ctx context.Context, uuid string) (*mo
 		"s.middle_name",
 		"s.group_id",
 		"s.email",
+		"s.password",
 		"g.name",
 	).From("students s")
 
@@ -157,6 +158,7 @@ func (this *studentRepo) GetStudentByUUID(ctx context.Context, uuid string) (*mo
 		&result.MiddleName,
 		&result.Group.ID,
 		&result.Email,
+		&result.Password,
 		&result.Group.Name,
 	); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

@@ -173,6 +173,7 @@ func (this *teacherRepo) GetTeacherByUUID(ctx context.Context, uuid string) (*mo
 		"s.last_name",
 		"s.middle_name",
 		"s.email",
+		"s.password",
 	).From("teachers s")
 
 	query = query.Where(sq.Eq{"s.uuid": uuid})
@@ -192,6 +193,7 @@ func (this *teacherRepo) GetTeacherByUUID(ctx context.Context, uuid string) (*mo
 		&result.LastName,
 		&result.MiddleName,
 		&result.Email,
+		&result.Password,
 	); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return nil, err
