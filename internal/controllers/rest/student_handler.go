@@ -78,7 +78,7 @@ func (s StudentHandler) UpdatePassword(c *gin.Context) {
 }
 
 func (s StudentHandler) GetStudent(c *gin.Context) {
-	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.StudentRole {
+	if c.Value(auth.RoleKey) != auth.AdminRole && c.Value(auth.RoleKey) != auth.StudentRole {
 		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
@@ -169,7 +169,7 @@ func (this StudentHandler) DeleteStduent(c *gin.Context) {
 }
 
 func (this StudentHandler) UpdateStudent(c *gin.Context) {
-	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.StudentRole {
+	if c.Value(auth.RoleKey) != auth.AdminRole && c.Value(auth.RoleKey) != auth.StudentRole {
 		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}

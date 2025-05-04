@@ -80,7 +80,7 @@ func (t TeacherHandler) UpdateTeacherPassword(c *gin.Context) {
 }
 
 func (t TeacherHandler) GetTeacher(c *gin.Context) {
-	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.TeacherRole {
+	if c.Value(auth.RoleKey) != auth.AdminRole && c.Value(auth.RoleKey) != auth.TeacherRole {
 		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
@@ -135,7 +135,7 @@ func (t TeacherHandler) CreateTeacher(c *gin.Context) {
 }
 
 func (t TeacherHandler) UpdateTeacher(c *gin.Context) {
-	if c.Value(auth.RoleKey) != auth.AdminRole || c.Value(auth.RoleKey) != auth.TeacherRole {
+	if c.Value(auth.RoleKey) != auth.AdminRole && c.Value(auth.RoleKey) != auth.TeacherRole {
 		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
