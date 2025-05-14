@@ -15,7 +15,9 @@ import (
 )
 
 const (
-	RoleKey     = "role"
+	RoleKey       = "role"
+	EntityUUIDKey = "uuid"
+
 	StudentRole = "student"
 	TeacherRole = "teacher"
 	AdminRole   = "admin"
@@ -139,6 +141,7 @@ func (a *AuthMiddleware) ValidateAccessToken() gin.HandlerFunc {
 
 		// Set user UUID in context for subsequent handlers
 		c.Set(RoleKey, role)
+		c.Set(EntityUUIDKey, claims.UserUUID)
 		c.Next()
 	}
 }

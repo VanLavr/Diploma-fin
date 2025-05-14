@@ -1,5 +1,11 @@
 package dto
 
+type GetStudentInfo struct {
+	Name          string `json:"name"`
+	Group         string `json:"group"`
+	AmountOfDebts int64  `json:"amountOfDebts"`
+}
+
 type GetStudentDTO struct {
 	Err  error   `json:"error"`
 	Data Student `json:"data"`

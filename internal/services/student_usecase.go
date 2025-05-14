@@ -25,6 +25,11 @@ func NewStudentUsecase(repo repositories.Repository) logic.StudentUsecase {
 	}
 }
 
+// GetAmountOfDebts implements logic.StudentUsecase.
+func (this *studentUsecase) GetAmountOfDebts(ctx context.Context, uuid string) (int64, error) {
+	return this.repo.GetAmountOfDebtsForStudent(ctx, uuid)
+}
+
 // ChangePassword implements logic.StudentUsecase.
 func (this *studentUsecase) ChangePassword(ctx context.Context, uuid, password string) error {
 	return this.repo.ChangeStudentPassword(ctx, uuid, password)

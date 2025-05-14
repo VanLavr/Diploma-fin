@@ -26,6 +26,7 @@ func NewStudentHandler(studentUsecase logic.StudentUsecase) *StudentHandler {
 }
 
 func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
+	group.GET("/student/info", this.GetStudentInfo)                  // + student
 	group.GET("/student/all_debts/:UUID", this.getAllDebts)          // + student
 	group.POST("/notification/:UUID/:examID", this.sendNotification) // + student
 	group.POST("/student", this.CreateStudent)                       // + admin
@@ -34,6 +35,43 @@ func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
 	group.GET("/student/all/:limit/:offset", this.GetStudents)       // + admin
 	group.GET("/student/:uuid", this.GetStudent)                     // + admin,student
 	group.PUT("/student/pass", this.UpdatePassword)                  // + student
+}
+
+func (s StudentHandler) GetStudentInfo(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.StudentRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
+		return
+	}
+
+	uuid, ok := c.Value(auth.EntityUUIDKey).(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrCannotDetermineUUID.Error()})
+		return
+	}
+
+	student, err := s.studentUsecase.GetStudent(c.Request.Context(), uuid)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	count, err := s.studentUsecase.GetAmountOfDebts(c.Request.Context(), uuid)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.GetStudentInfo{
+		Name:          student.FirstName + " " + student.LastName + " " + student.MiddleName,
+		Group:         student.Group.Name,
+		AmountOfDebts: count,
+	})
 }
 
 func (s StudentHandler) UpdatePassword(c *gin.Context) {
@@ -46,7 +84,7 @@ func (s StudentHandler) UpdatePassword(c *gin.Context) {
 	if err := c.Bind(&r); err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
+			"error": err.Error(),
 		})
 		return
 	}

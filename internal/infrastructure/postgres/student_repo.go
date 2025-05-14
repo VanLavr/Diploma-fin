@@ -20,6 +20,23 @@ type studentRepo struct {
 	db *pgxpool.Pool
 }
 
+// GetAmountOfDebtsForStudent implements repositories.StudentRepository.
+func (this *studentRepo) GetAmountOfDebtsForStudent(ctx context.Context, uuid string) (int64, error) {
+	sql, args, err := sq.Select("count(id)").From("debts").Where(sq.Eq{"student_uuid": uuid}).PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return -1, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	row := this.db.QueryRow(ctx, sql, args...)
+
+	var result int64
+	if err := row.Scan(&result); err != nil {
+		return -1, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	}
+
+	return result, nil
+}
+
 // ChangeStudentPassword implements repositories.StudentRepository.
 func (this *studentRepo) ChangeStudentPassword(ctx context.Context, uuid, password string) error {
 	query := sq.Update("students").

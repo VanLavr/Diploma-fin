@@ -17,5 +17,6 @@ var ErrInvalidData = errors.New("provided data is invalid")
 var ErroNoItemsFound = errors.New("no items found")
 var ErroInvalidPassword = errors.New("wrong password")
 var ErrUserDoesNotHaveRights = errors.New("user doesn't have required rights")
+var ErrCannotDetermineUUID = errors.New("token is malformed: can't determine structure")
 
 const MethodKey string = "in method"
