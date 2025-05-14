@@ -159,7 +159,7 @@ func (this studentUsecase) GetAllDebts(ctx context.Context, UUID string) ([]type
 	return result, nil
 }
 
-func (this studentUsecase) SendNotification(ctx context.Context, UUID string, examID int64) error {
+func (this studentUsecase) SendNotification(ctx context.Context, UUID string, debtID int64) error {
 	// get student personal data
 	fmt.Println("10")
 	students, err := this.repo.GetStudents(ctx, query.GetStudentsFilters{
@@ -176,10 +176,10 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 	fmt.Println("5")
 
 	// get debt by id
-	exams, err := this.repo.GetDebts(ctx, query.GetDebtsFilters{
-		ExamIDs: []int64{examID},
+	debts, err := this.repo.GetDebts(ctx, query.GetDebtsFilters{
+		DebtIDs: []int64{debtID},
 	})
-	if len(exams) == 0 {
+	if len(debts) == 0 {
 		return log.ErrorWrapper(errors.ErroNoItemsFound, errors.ERR_APPLICATION, "")
 	}
 	if err != nil {
@@ -189,7 +189,7 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 
 	// get teacher personal data
 	teachers, err := this.repo.GetTeachers(ctx, query.GetTeachersFilters{
-		UUIDs: []string{exams[0].Teacher.UUID},
+		UUIDs: []string{debts[0].Teacher.UUID},
 	})
 	if len(teachers) == 0 {
 		return log.ErrorWrapper(errors.ErroNoItemsFound, errors.ERR_APPLICATION, "")
@@ -201,8 +201,8 @@ func (this studentUsecase) SendNotification(ctx context.Context, UUID string, ex
 
 	// send notification
 	err = this.repo.SendNotification(ctx, students[0], teachers[0].Email, models.Exam{
-		ID:   examID,
-		Name: exams[0].Exam.Name,
+		ID:   debts[0].Exam.ID,
+		Name: debts[0].Exam.Name,
 	})
 	if err != nil {
 		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")

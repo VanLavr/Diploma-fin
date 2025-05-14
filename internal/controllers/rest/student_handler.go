@@ -26,15 +26,15 @@ func NewStudentHandler(studentUsecase logic.StudentUsecase) *StudentHandler {
 }
 
 func (this StudentHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("/student/info", this.GetStudentInfo)                  // + student
-	group.GET("/student/all_debts/:UUID", this.getAllDebts)          // + student
-	group.POST("/notification/:UUID/:examID", this.sendNotification) // + student
-	group.POST("/student", this.CreateStudent)                       // + admin
-	group.PUT("/student", this.UpdateStudent)                        // + admin,student
-	group.DELETE("/student/:uuid", this.DeleteStduent)               // + admin
-	group.GET("/student/all/:limit/:offset", this.GetStudents)       // + admin
-	group.GET("/student/:uuid", this.GetStudent)                     // + admin,student
-	group.PUT("/student/pass", this.UpdatePassword)                  // + student
+	group.GET("/student/info", this.GetStudentInfo)            // + student | added
+	group.GET("/student/all_debts", this.getAllDebts)          // + student | modified
+	group.POST("/notification", this.sendNotification)         // + student | modified
+	group.POST("/student", this.CreateStudent)                 // + admin
+	group.PUT("/student", this.UpdateStudent)                  // + admin,student
+	group.DELETE("/student/:uuid", this.DeleteStduent)         // + admin
+	group.GET("/student/all/:limit/:offset", this.GetStudents) // + admin
+	group.GET("/student/:uuid", this.GetStudent)               // + admin,student
+	group.PUT("/student/pass", this.UpdatePassword)            // + student
 }
 
 func (s StudentHandler) GetStudentInfo(c *gin.Context) {
@@ -271,11 +271,15 @@ func (this StudentHandler) sendNotification(c *gin.Context) {
 		return
 	}
 
-	id := c.Param("examID")
-	fmt.Println("1")
-	examID, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		log.ErrorWrapper(err, errors.ERR_INTERFACES, "wrong examen id")
+	uuid, ok := c.Value(auth.EntityUUIDKey).(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrCannotDetermineUUID.Error()})
+		return
+	}
+
+	var r dto.RequireDebtDateAndPlace
+	if err := c.Bind(&r); err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err,
 		})
@@ -283,7 +287,7 @@ func (this StudentHandler) sendNotification(c *gin.Context) {
 	}
 	fmt.Println("2")
 
-	switch err := this.studentUsecase.SendNotification(c.Request.Context(), c.Param("UUID"), examID); err {
+	switch err := this.studentUsecase.SendNotification(c.Request.Context(), uuid, r.DebtID); err {
 	case nil:
 	default:
 		fmt.Println("3")
@@ -306,7 +310,13 @@ func (this StudentHandler) getAllDebts(c *gin.Context) {
 		return
 	}
 
-	debts, err := this.studentUsecase.GetAllDebts(c.Request.Context(), c.Param("UUID"))
+	uuid, ok := c.Value(auth.EntityUUIDKey).(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrCannotDetermineUUID.Error()})
+		return
+	}
+
+	debts, err := this.studentUsecase.GetAllDebts(c.Request.Context(), uuid)
 	switch {
 	case err == nil:
 	default:

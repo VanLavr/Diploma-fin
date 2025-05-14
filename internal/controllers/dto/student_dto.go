@@ -111,6 +111,10 @@ type CreateDebtDTO struct {
 	Date        string `json:"date"`
 }
 
+type RequireDebtDateAndPlace struct {
+	DebtID int64 `json:"debtID"`
+}
+
 type CreateStudentDTO struct {
 	FirstName  string `json:"first_name"`
 	LastName   string `json:"last_name"`
