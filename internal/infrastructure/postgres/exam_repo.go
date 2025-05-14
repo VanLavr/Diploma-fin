@@ -365,7 +365,7 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 		"g.name",
 		"s.email",
 		"d.date",
-		"d.address",
+		"COALESCE(d.address, '')",
 	)
 	query = query.From("debts d")
 	query = query.LeftJoin("students s ON d.student_uuid = s.uuid")
