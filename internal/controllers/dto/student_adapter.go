@@ -27,6 +27,7 @@ func DebtDTOFromTypes(src types.Debt) Debt {
 		ex      = Exam{}
 		teacher = Teacher{}
 		student = Student{}
+		groups  = make([]Group, 0, len(src.Groups))
 	)
 	if src.Exam != nil {
 		ex.ID = src.Exam.ID
@@ -51,16 +52,25 @@ func DebtDTOFromTypes(src types.Debt) Debt {
 		}
 	}
 
+	for _, group := range src.Groups {
+		groups = append(groups, Group{
+			ID:   group.ID,
+			Name: group.Name,
+		})
+	}
+
 	var date string
 	if src.Date != nil {
 		date = src.Date.Format(time.RFC3339)
 	}
 	return Debt{
-		ID:      src.ID,
-		Date:    date,
-		Exam:    &ex,
-		Teacher: &teacher,
-		Student: &student,
+		ID:        src.ID,
+		Date:      date,
+		Address:   src.Address,
+		Exam:      &ex,
+		Teacher:   &teacher,
+		Student:   &student,
+		GroupList: groups,
 	}
 }
 

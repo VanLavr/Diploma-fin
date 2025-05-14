@@ -90,12 +90,14 @@ type Teacher struct {
 }
 
 type Debt struct {
-	ID   int64  `json:"id"`
-	Date string `json:"date"`
+	ID      int64  `json:"id"`
+	Date    string `json:"date"`
+	Address string `json:"address"`
 
-	Student *Student `json:"student"`
-	Teacher *Teacher `json:"teacher"`
-	Exam    *Exam    `json:"exam"`
+	Student   *Student `json:"student"`
+	Teacher   *Teacher `json:"teacher"`
+	Exam      *Exam    `json:"exam"`
+	GroupList []Group  `json:"groups"`
 }
 
 type CreateExamDTO struct {

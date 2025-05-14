@@ -365,6 +365,7 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 		"g.name",
 		"s.email",
 		"d.date",
+		"d.address",
 	)
 	query = query.From("debts d")
 	query = query.LeftJoin("students s ON d.student_uuid = s.uuid")
@@ -430,6 +431,7 @@ func (this examRepo) GetDebts(ctx context.Context, filters query.GetDebtsFilters
 			&debt.Student.Group.Name,
 			&debt.Student.Email,
 			&debt.Date,
+			&debt.Address,
 		); err != nil {
 			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 			return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "can not scan result")

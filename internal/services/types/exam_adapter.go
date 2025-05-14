@@ -26,6 +26,7 @@ func DebtFromDomain(src *entities.Debt) Debt {
 		student = Student{
 			Group: &Group{},
 		}
+		groupList = make([]Group, 0, len(src.GroupList))
 	)
 	if src.Exam != nil {
 		ex.ID = src.Exam.ID
@@ -50,12 +51,21 @@ func DebtFromDomain(src *entities.Debt) Debt {
 		}
 	}
 
+	for _, group := range src.GroupList {
+		groupList = append(groupList, Group{
+			ID:   group.ID,
+			Name: group.Name,
+		})
+	}
+
 	return Debt{
 		ID:      src.ID,
+		Address: src.Address,
 		Date:    src.Date,
 		Exam:    &ex,
 		Teacher: &teacher,
 		Student: &student,
+		Groups:  groupList,
 	}
 }
 

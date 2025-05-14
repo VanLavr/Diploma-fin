@@ -8,9 +8,11 @@ type Exam struct {
 }
 
 type Debt struct {
-	ID      int64
-	Date    *time.Time
-	Exam    *Exam
-	Student *Student
-	Teacher *Teacher
+	ID        int64
+	Address   string
+	Date      *time.Time
+	Exam      *Exam
+	Student   *Student
+	Teacher   *Teacher
+	GroupList []Group
 }

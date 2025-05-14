@@ -130,6 +130,32 @@ func (this studentUsecase) GetAllDebts(ctx context.Context, UUID string) ([]type
 		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
 
+	for i, debt := range result {
+		debtsWithGroupsByExam, err := this.repo.GetDebts(ctx, query.GetDebtsFilters{
+			ExamIDs: []int64{debt.Exam.ID},
+		})
+		if err != nil {
+			return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+		}
+
+		uniqueGroups := make(map[int64]models.Group)
+		for _, debt := range debtsWithGroupsByExam {
+			uniqueGroups[debt.Student.Group.ID] = models.Group{
+				ID:   debt.Student.Group.ID,
+				Name: debt.Student.Group.Name,
+			}
+		}
+		groupList := make([]types.Group, 0, len(uniqueGroups))
+		for _, group := range uniqueGroups {
+			groupList = append(groupList, types.Group{
+				ID:   group.ID,
+				Name: group.Name,
+			})
+		}
+
+		result[i].Groups = groupList
+	}
+
 	return result, nil
 }
 
