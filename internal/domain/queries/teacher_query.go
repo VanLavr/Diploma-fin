@@ -13,8 +13,12 @@ type GetTeachersFilters struct {
 }
 
 type SearchDebtsFilters struct {
-	IDs       []int64
-	ExamNames []string
+	IDs           []int64
+	ExamNames     []string
+	StudentUUIDs  []string
+	TeacherUUIDs  []string
+	StudentEmails []string
+	TeacherEmails []string
 }
 
 type SearchExamFilters struct {

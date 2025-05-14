@@ -285,7 +285,9 @@ func (fu *fileUsecase) CreateExamIfNotExists(ctx context.Context, exam types.Exa
 
 func (fu *fileUsecase) CreateDebtIfNotExists(ctx context.Context, debt types.Debt) (int64, error) {
 	debtsFound, err := fu.repo.SearchDebts(ctx, query.SearchDebtsFilters{
-		ExamNames: []string{debt.Exam.Name},
+		ExamNames:     []string{debt.Exam.Name},
+		StudentEmails: []string{debt.Student.Email},
+		TeacherEmails: []string{debt.Teacher.Email},
 	})
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

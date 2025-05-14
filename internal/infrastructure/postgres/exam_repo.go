@@ -57,9 +57,20 @@ func (this *examRepo) SearchDebts(ctx context.Context, filters query.SearchDebts
 	if len(filters.IDs) > 0 {
 		query = query.Where(sq.Eq{"d.id": filters.IDs})
 	}
-
 	if len(filters.ExamNames) > 0 {
 		query = query.Where(sq.Eq{"e.name": filters.ExamNames})
+	}
+	if len(filters.StudentUUIDs) > 0 {
+		query = query.Where(sq.Eq{"s.uuid": filters.StudentUUIDs})
+	}
+	if len(filters.TeacherUUIDs) > 0 {
+		query = query.Where(sq.Eq{"t.uuid": filters.TeacherUUIDs})
+	}
+	if len(filters.StudentEmails) > 0 {
+		query = query.Where(sq.Eq{"s.email": filters.StudentEmails})
+	}
+	if len(filters.TeacherEmails) > 0 {
+		query = query.Where(sq.Eq{"t.email": filters.TeacherEmails})
 	}
 
 	// Build the SQL and args
