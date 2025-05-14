@@ -28,8 +28,8 @@ func NewTeacherHandler(teacherUsecase logic.TeacherUsecase, studentUsecase logic
 }
 
 func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("/teacher/all_debts/:UUID", this.getAllDebts)    // + teacher
-	group.POST("/set_date", this.setDate)                      // + teacher
+	group.GET("/teacher/all_debts", this.getAllDebts)          // + teacher | modified
+	group.POST("/set_date", this.setDate)                      // + teacher | modified
 	group.POST("/teacher", this.CreateTeacher)                 // + admin
 	group.PUT("/teacher", this.UpdateTeacher)                  // + admin,teacher
 	group.DELETE("/teacher/:uuid", this.DeleteTeacher)         // + admin
@@ -234,6 +234,11 @@ func (this TeacherHandler) setDate(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
+	uuid, ok := c.Value(auth.EntityUUIDKey).(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrCannotDetermineUUID.Error()})
+		return
+	}
 
 	var request dto.SetDebtDateDTO
 	if err := c.Bind(&request); err != nil {
@@ -242,9 +247,10 @@ func (this TeacherHandler) setDate(c *gin.Context) {
 		})
 		return
 	}
+	request.TeacherUUID = uuid
 	fmt.Println(request)
 
-	switch err := this.teacherUsecase.SetDate(c.Request.Context(), request.TeacherUUID, request.ExamDate, request.DebtID); err {
+	switch err := this.teacherUsecase.SetDate(c.Request.Context(), request.TeacherUUID, request.ExamDate, request.Address, request.ExamID); err {
 	case nil:
 	default:
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -259,8 +265,13 @@ func (this TeacherHandler) getAllDebts(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
 		return
 	}
+	uuid, ok := c.Value(auth.EntityUUIDKey).(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrCannotDetermineUUID.Error()})
+		return
+	}
 
-	debts, err := this.teacherUsecase.GetAllDebts(c.Request.Context(), c.Param("UUID"))
+	debts, err := this.teacherUsecase.GetAllDebts(c.Request.Context(), uuid)
 	switch {
 	case err == nil:
 	default:

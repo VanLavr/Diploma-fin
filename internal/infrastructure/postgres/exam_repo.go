@@ -448,6 +448,7 @@ func (this examRepo) UpdateDebt(ctx context.Context, setCommand commands.UpdateD
 		Set("date", setCommand.Date).
 		Set("teacher_uuid", setCommand.TeacherUUID).
 		Set("student_uuid", setCommand.StudentUUID).
+		Set("address", setCommand.Address).
 		Where(sq.Eq{"id": setCommand.DebtID}).
 		PlaceholderFormat(sq.Dollar)
 

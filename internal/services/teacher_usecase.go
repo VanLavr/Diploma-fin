@@ -2,10 +2,12 @@ package application
 
 import (
 	"context"
+	e "errors"
 	"fmt"
 	"time"
 
 	"github.com/VanLavr/Diploma-fin/internal/domain/commands"
+	"github.com/VanLavr/Diploma-fin/internal/domain/models"
 	query "github.com/VanLavr/Diploma-fin/internal/domain/queries"
 	"github.com/VanLavr/Diploma-fin/internal/domain/repositories"
 	valueobjects "github.com/VanLavr/Diploma-fin/internal/domain/value_objects"
@@ -125,10 +127,36 @@ func (t teacherUsecase) GetAllDebts(ctx context.Context, UUID string) ([]types.D
 		return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
 	}
 
+	for i, debt := range result {
+		debtsWithGroupsByExam, err := t.repo.GetDebts(ctx, query.GetDebtsFilters{
+			ExamIDs: []int64{debt.Exam.ID},
+		})
+		if err != nil {
+			return nil, log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+		}
+
+		uniqueGroups := make(map[int64]models.Group)
+		for _, debt := range debtsWithGroupsByExam {
+			uniqueGroups[debt.Student.Group.ID] = models.Group{
+				ID:   debt.Student.Group.ID,
+				Name: debt.Student.Group.Name,
+			}
+		}
+		groupList := make([]types.Group, 0, len(uniqueGroups))
+		for _, group := range uniqueGroups {
+			groupList = append(groupList, types.Group{
+				ID:   group.ID,
+				Name: group.Name,
+			})
+		}
+
+		result[i].Groups = groupList
+	}
+
 	return result, nil
 }
 
-func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string, debtID int64) error {
+func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date, address string, examID int64) error {
 	examDate, err := time.Parse(valueobjects.DateLayout, date)
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -136,7 +164,7 @@ func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string
 	}
 
 	debts, err := this.repo.GetDebts(ctx, query.GetDebtsFilters{
-		DebtIDs: []int64{debtID},
+		DebtIDs: []int64{examID},
 	})
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
@@ -147,14 +175,27 @@ func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date string
 		return log.ErrorWrapper(errors.ErroNoItemsFound, errors.ERR_APPLICATION, "")
 	}
 
-	if err = this.repo.UpdateDebt(ctx, commands.UpdateDebtByID{
-		DebtID:      debtID,
-		Date:        examDate,
-		TeacherUUID: teacherUUID,
-		StudentUUID: debts[0].Student.UUID,
-	}); err != nil {
-		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
-		return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+	for _, debt := range debts {
+		if err = this.repo.UpdateDebt(ctx, commands.UpdateDebtByID{
+			DebtID:      debt.ID,
+			Date:        examDate,
+			TeacherUUID: teacherUUID,
+			StudentUUID: debt.Student.UUID,
+			Address:     address,
+		}); err != nil {
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+			return log.ErrorWrapper(err, errors.ERR_INFRASTRUCTURE, "")
+		}
+
+		err = this.repo.NotifyNewDateAndPlace(ctx, debt.Student.Email, debt.Exam.Name, date, address)
+		switch {
+		case err == nil:
+		case e.Is(err, errors.ErrInvalidData):
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		default:
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+			return err
+		}
 	}
 
 	return nil

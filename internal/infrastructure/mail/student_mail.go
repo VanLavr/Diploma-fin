@@ -32,6 +32,47 @@ func NewStudentMailer(cfg *config.Config) repositories.StudentMailer {
 	}
 }
 
+// NotifyNewDateAndPlace implements repositories.StudentMailer.
+func (this *mailer) NotifyNewDateAndPlace(ctx context.Context, studentEmail, subjectName, date, place string) error {
+	if studentEmail == "" || !strings.Contains(studentEmail, "@") {
+		log.Logger.Error(errors.ErrInvalidData.Error(), errors.MethodKey, log.GetMethodName())
+		return errors.ErrInvalidData
+	}
+	fmt.Println("20", this.OAuthCode)
+
+	subject := fmt.Sprintf("Subject: date and place for debt were set for student: %s\n", studentEmail)
+	body := fmt.Sprintf(
+		valueobjects.DateSetNotification,
+		subjectName,
+		date,
+		place,
+	)
+
+	msg := []byte(subject + "\n" + body)
+
+	auth := smtp.PlainAuth(
+		"",
+		this.AuthEmail,
+		this.OAuthCode,
+		this.SMTPHost,
+	)
+
+	if err := smtp.SendMail(
+		this.SMTPHost+":"+this.SMTPPort,
+		auth,
+		this.AuthEmail,
+		[]string{studentEmail},
+		msg,
+	); err != nil {
+		fmt.Println("21")
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		return fmt.Errorf("failed to send email: %w", err)
+	}
+
+	fmt.Println("Email sent successfully to", studentEmail)
+	return nil
+}
+
 // SendPassword implements repositories.StudentMailer.
 func (this *mailer) SendPassword(ctx context.Context, email, password string) error {
 	if email == "" || !strings.Contains(email, "@") {

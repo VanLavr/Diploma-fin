@@ -22,4 +22,5 @@ type StudentRepository interface {
 type StudentMailer interface {
 	SendNotification(context.Context, models.Student, string, models.Exam) error
 	SendPassword(context.Context, string, string) error
+	NotifyNewDateAndPlace(context.Context, string, string, string, string) error // email, exam name, date, address
 }

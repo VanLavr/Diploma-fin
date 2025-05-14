@@ -10,6 +10,7 @@ import (
 type UpdateDebtByID struct {
 	DebtID      int64
 	Date        time.Time
+	Address     string
 	TeacherUUID string
 	StudentUUID string
 }

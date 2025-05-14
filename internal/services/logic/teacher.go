@@ -7,7 +7,7 @@ import (
 )
 
 type TeacherUsecase interface {
-	SetDate(context.Context, string, string, int64) error
+	SetDate(context.Context, string, string, string, int64) error
 	GetAllDebts(context.Context, string) ([]types.Debt, error)
 	GetTeacherByEmail(context.Context, string) ([]types.Teacher, error)
 	DeleteTeacher(context.Context, string) error

@@ -2,8 +2,9 @@ package dto
 
 type SetDebtDateDTO struct {
 	TeacherUUID string `json:"teacher_uuid"`
-	DebtID      int64  `json:"debt_id"`
+	ExamID      int64  `json:"exam_id"`
 	ExamDate    string `json:"exam_date"`
+	Address     string `json:"address"`
 }
 
 type Exam struct {
