@@ -28,6 +28,7 @@ func NewTeacherHandler(teacherUsecase logic.TeacherUsecase, studentUsecase logic
 }
 
 func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
+	group.GET("/teacher/info", this.getTeacherInfo)            // + teacher | added
 	group.GET("/teacher/all_debts", this.getAllDebts)          // + teacher | modified
 	group.POST("/set_date", this.setDate)                      // + teacher | modified
 	group.POST("/teacher", this.CreateTeacher)                 // + admin
@@ -36,6 +37,33 @@ func (this TeacherHandler) RegisterRoutes(group *gin.RouterGroup) {
 	group.GET("/teacher/all/:limit/:offset", this.GetTeachers) // + admin
 	group.GET("/teacher/:uuid", this.GetTeacher)               // + admin,teacher
 	group.PUT("/teacher/pass", this.UpdateTeacherPassword)     // + teacher
+}
+
+func (t TeacherHandler) getTeacherInfo(c *gin.Context) {
+	if c.Value(auth.RoleKey) != auth.TeacherRole {
+		c.JSON(http.StatusForbidden, gin.H{"error": errors.ErrUserDoesNotHaveRights.Error()})
+		return
+	}
+
+	uuid, ok := c.Value(auth.EntityUUIDKey).(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrCannotDetermineUUID.Error()})
+		return
+	}
+
+	teacher, err := t.teacherUsecase.GetTeacher(c.Request.Context(), uuid)
+	if err != nil {
+		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.GetTeacherInfoDTO{
+		UUID: uuid,
+		Name: teacher.FirstName + " " + teacher.LastName + " " + teacher.MiddleName,
+	})
 }
 
 func (t TeacherHandler) UpdateTeacherPassword(c *gin.Context) {

@@ -68,6 +68,7 @@ func (s StudentHandler) GetStudentInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.GetStudentInfo{
+		UUID:          uuid,
 		Name:          student.FirstName + " " + student.LastName + " " + student.MiddleName,
 		Group:         student.Group.Name,
 		AmountOfDebts: count,

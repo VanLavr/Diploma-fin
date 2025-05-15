@@ -1,6 +1,12 @@
 package dto
 
+type GetTeacherInfoDTO struct {
+	UUID string `json:"uuid"`
+	Name string `json:"name"`
+}
+
 type GetStudentInfo struct {
+	UUID          string `json:"uuid"`
 	Name          string `json:"name"`
 	Group         string `json:"group"`
 	AmountOfDebts int64  `json:"amountOfDebts"`
