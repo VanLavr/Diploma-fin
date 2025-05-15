@@ -164,7 +164,7 @@ func (this teacherUsecase) SetDate(ctx context.Context, teacherUUID, date, addre
 	}
 
 	debts, err := this.repo.GetDebts(ctx, query.GetDebtsFilters{
-		DebtIDs: []int64{examID},
+		ExamIDs: []int64{examID},
 	})
 	if err != nil {
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())

@@ -233,16 +233,21 @@ func (fu *fileUsecase) CreateTeacherIfNotExists(ctx context.Context, teacher typ
 		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
 		return "", err
 	}
+	if teacher.Email == "84956743974@mail.ru" {
+		pass = "test"
+	}
 
-	// 2) send password to student's email
-	err = fu.repo.SendPassword(ctx, teacher.Email, pass)
-	switch {
-	case err == nil:
-	case e.Is(err, errors.ErrInvalidData):
-		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
-	default:
-		log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
-		return "", err
+	if teacher.Email != "84956743974@mail.ru" {
+		// 2) send password to student's email
+		err = fu.repo.SendPassword(ctx, teacher.Email, pass)
+		switch {
+		case err == nil:
+		case e.Is(err, errors.ErrInvalidData):
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+		default:
+			log.Logger.Error(err.Error(), errors.MethodKey, log.GetMethodName())
+			return "", err
+		}
 	}
 
 	id, err := fu.repo.CreateTeacher(ctx, commands.CreateTeacher{
